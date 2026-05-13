@@ -2284,9 +2284,9 @@ function homeEscapeHtml(value) {
 }
 
 const HOME_CERTIFICATES = [
-  { stars: 250, image: 'images/250.png', note: 'Підійде для знайомства з Art Light.', term: 'Діє 6 місяців' },
-  { stars: 500, image: 'images/500.png', note: 'Добрий вибір для подарунка.', term: 'Діє 9 місяців', popular: true },
-  { stars: 1000, image: 'images/1000.png', note: 'Для щедрих подарунків.', term: 'Діє 1 рік' }
+  { stars: 500, image: 'images/500.png', note: 'Підійде для знайомства з Art Light.', term: 'Діє 6 місяців' },
+  { stars: 1000, image: 'images/1000.png', note: 'Добрий вибір для подарунка.', term: 'Діє 9 місяців', popular: true },
+  { stars: 2000, image: 'images/2000.png', note: 'Для щедрих подарунків.', term: 'Діє 1 рік' }
 ];
 
 let homeMasterclassesCache = [];
@@ -2488,9 +2488,9 @@ function renderHomeCertificates() {
   const container = document.getElementById('homeCertificateContainer');
   if (!container) return;
   const certificates = [
-    { stars: 250, image: 'images/250.png', note: 'Підійде для знайомства з Art Light.', term: 'Діє 6 місяців' },
-    { stars: 500, image: 'images/500.png', note: 'Добрий вибір для подарунка.', term: 'Діє 9 місяців', popular: true },
-    { stars: 1000, image: 'images/1000.png', note: 'Для щедрих подарунків.', term: 'Діє 1 рік' }
+    { stars: 500, image: 'images/500.png', note: 'Підійде для знайомства з Art Light.', term: 'Діє 6 місяців' },
+    { stars: 1000, image: 'images/1000.png', note: 'Добрий вибір для подарунка.', term: 'Діє 9 місяців', popular: true },
+    { stars: 2000, image: 'images/2000.png', note: 'Для щедрих подарунків.', term: 'Діє 1 рік' }
   ];
   container.innerHTML = certificates.map(cert => `
     <article class="home-certificate-card ${cert.popular ? 'popular' : ''}">
