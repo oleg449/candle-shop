@@ -277,6 +277,21 @@ function getCategoriesFromProducts() {
   } catch(_) { return []; }
 }
 
+function categoryHasProducts(category) {
+  if (!category || category === 'all') return true;
+  return getCategoriesFromProducts().some(cat => categoriesEqual(cat, category));
+}
+
+function pruneEmptySelectedCategory() {
+  const selected = typeof currentCategory !== 'undefined' ? currentCategory : window.currentCategory;
+  if (selected && selected !== 'all' && !categoryHasProducts(selected)) {
+    try { currentCategory = 'all'; } catch (_) {}
+    window.currentCategory = 'all';
+    return true;
+  }
+  return false;
+}
+
 // Toggle .active class on chips according to current filters
 function updateChipsActiveState() {
   const wrap = document.querySelector('.mobile-search-chips');
@@ -1256,8 +1271,9 @@ document.addEventListener("DOMContentLoaded", function () {
   fetch("products.json?t=" + Date.now(), { cache: 'no-store' })
   .then(res => res.json())
   .then(data => {
-    allProducts = data;
-    window.productsData = data;
+    allProducts = Array.isArray(data) ? data : [];
+    window.productsData = allProducts;
+    pruneEmptySelectedCategory();
     updateCategoryPanel(); // ← обновляем панель
     renderProductsPage(currentPage); // ✅ Это будет рендерить постранично
     try { renderSearchChips(); renderSearchSort(); bindSearchSortHandlers(); } catch(_) {}
@@ -2126,6 +2142,7 @@ function filterProductsBySearch(products) {
 
 function getFilteredProducts(){
   let filtered = allProducts;
+  pruneEmptySelectedCategory();
   
   // Сначала применяем поиск
   filtered = filterProductsBySearch(filtered);
@@ -2765,10 +2782,15 @@ function reloadProducts() {
   .then(products => {
     window.productsData = Array.isArray(products) ? products : [];
     allProducts = window.productsData;
+    pruneEmptySelectedCategory();
     currentPage = 1;
     visibleProductsCount = 9;
     updateCategoryPanel();
     renderProductsPage(currentPage);
+    try {
+      renderSearchChips();
+      renderSearchSort();
+    } catch (_) {}
   })
   .catch(error => console.error("Помилка завантаження товарів:", error));
 }
@@ -3292,6 +3314,7 @@ async function openCustomOrderProductModal(event) {
       const products = await response.json();
       window.productsData = Array.isArray(products) ? products : [];
       allProducts = window.productsData;
+      pruneEmptySelectedCategory();
       product = findProduct();
     } catch (_) {
       product = null;
@@ -3716,6 +3739,7 @@ fetch("products.json?t=" + new Date().getTime())
   .then(products => {
     window.productsData = Array.isArray(products) ? products : [];
     allProducts = window.productsData;
+    pruneEmptySelectedCategory();
     visibleProductsCount = 9;
     updateCategoryPanel(); // ← обновляем панель
     renderProductsPage(currentPage);
@@ -3747,6 +3771,7 @@ function updateCategoryPanel() {
 
   // Собираем уникальные категории
   const categories = getCategoriesFromProducts();
+  pruneEmptySelectedCategory();
   
   // Очищаем список категорий
   categoryList.innerHTML = '';
