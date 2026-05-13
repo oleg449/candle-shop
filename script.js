@@ -115,16 +115,40 @@ function renderSearchSort() {
   if (sSel) sSel.value = sortOption || 'relevance';
 }
 
+function normalizeCategoryLabel(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function categoryCompareKey(value) {
+  return normalizeCategoryLabel(value).toLocaleLowerCase('uk-UA').normalize('NFKC');
+}
+
+function canonicalCategoryMap(products = allProducts) {
+  const map = new Map();
+  (products || []).forEach((product) => {
+    const label = normalizeCategoryLabel(product && product.category);
+    if (!label) return;
+    const key = categoryCompareKey(label);
+    if (!map.has(key)) map.set(key, label);
+  });
+  return map;
+}
+
+function productCategoryLabel(product) {
+  const fallback = 'Інші товари';
+  const label = normalizeCategoryLabel(product && product.category) || fallback;
+  return canonicalCategoryMap().get(categoryCompareKey(label)) || label;
+}
+
+function categoriesEqual(a, b) {
+  return categoryCompareKey(a) === categoryCompareKey(b);
+}
+
 // Build unique, sorted categories from loaded products
 function getCategoriesFromProducts() {
   try {
-    const cats = new Set();
-    (allProducts || []).forEach(p => {
-      if (p && typeof p.category === 'string' && p.category.trim()) {
-        cats.add(p.category.trim());
-      }
-    });
-    return Array.from(cats).sort((a,b)=>a.localeCompare(b));
+    const cats = canonicalCategoryMap();
+    return Array.from(cats.values()).sort((a,b)=>a.localeCompare(b));
   } catch(_) { return []; }
 }
 
@@ -205,13 +229,8 @@ function hasActiveAccountSession() {
 // Build unique, sorted categories from loaded products
 function getCategoriesFromProducts() {
   try {
-    const cats = new Set();
-    (allProducts || []).forEach(p => {
-      if (p && typeof p.category === 'string' && p.category.trim()) {
-        cats.add(p.category.trim());
-      }
-    });
-    return Array.from(cats).sort((a,b)=>a.localeCompare(b));
+    const cats = canonicalCategoryMap();
+    return Array.from(cats.values()).sort((a,b)=>a.localeCompare(b));
   } catch(_) { return []; }
 }
 
@@ -690,12 +709,9 @@ function openCart() {
   // Add star spending section
   const bonusStars = window.bonusStars || 0; // Use global variable instead of localStorage
   // Determine if user has purchased stars via redeemed certificates (remove 60⭐ limit for such users)
-  const hasPurchasedStars = (() => {
-    try {
-      const list = JSON.parse(localStorage.getItem('certCodes') || '[]');
-      return Array.isArray(list) && list.some(c => c && c.redeemed);
-    } catch(_) { return false; }
-  })();
+  let certStarsBalance = 0;
+  try { certStarsBalance = parseInt(localStorage.getItem('certStarsBalance') || '0', 10) || 0; } catch(_) {}
+  const regularStarsBalance = Math.max(0, bonusStars - certStarsBalance);
 
 // ===== Safety fallback for side menu on all pages (About, Info, etc.) =====
 try {
@@ -720,10 +736,9 @@ try {
   // ESC to close
   document.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') { const panel = document.getElementById('categoryPanel'); if (panel) { panel.classList.remove('open'); document.body.classList.remove('category-open'); } } });
 } catch(_) {}
-  const maxStarsPerOrder = hasPurchasedStars ? Number.MAX_SAFE_INTEGER : 60;
   const maxStarsFromSubtotal = Math.floor(subtotal);
-  const maxStarsToUse = Math.min(bonusStars, maxStarsFromSubtotal, maxStarsPerOrder);
-  const displayMaxPerOrder = hasPurchasedStars ? 'без обмежень' : String(60);
+  const maxStarsToUse = Math.min(maxStarsFromSubtotal, certStarsBalance + Math.min(regularStarsBalance, 60));
+  const displayMaxPerOrder = certStarsBalance > 0 ? 'без ліміту для промокоду' : String(60);
   
   // Initialize currentStarDiscount if not set
   if (typeof window.currentStarDiscount === 'undefined') {
@@ -738,7 +753,7 @@ try {
       <h4>Бонусні бали</h4>
     </div>
     <div class="available-stars">
-      <span>Доступно: <strong>${bonusStars} ⭐</strong><span class="mobile-hide"> (макс. ${displayMaxPerOrder}${hasPurchasedStars ? '' : ' ⭐'} за замовлення)</span></span>
+      <span>Доступно: <strong>${bonusStars} ⭐</strong><span class="mobile-hide"> (макс. ${displayMaxPerOrder}${certStarsBalance > 0 ? '' : ' ⭐'} за замовлення)</span></span>
       <span class="star-rate">1 ⭐ = 1 ₴ знижки</span>
       <div class="star-note" style="font-size:12px; color:#7a6a5a; margin-top:4px; line-height:1.4;">
         Ліміт: <strong>до 60 ⭐</strong> з <em>звичайних</em> бонусів на замовлення, та <strong>без обмежень</strong> для зірок із сертифікатів.
@@ -747,7 +762,7 @@ try {
       <div class="star-note-compact">Ліміт: 60 ⭐ звичайні; сертифікат — без обмежень.</div>
     </div>
     <div class="use-stars">
-      <label for="starsToUse">Скільки зірок використати? (${hasPurchasedStars ? 'макс. 60 для звичайних' : `макс. ${Math.min(maxStarsToUse, 60)}`})</label>
+      <label for="starsToUse">Скільки зірок використати? (макс. ${maxStarsToUse})</label>
       <div class="star-input-group">
         <button type="button" class="star-btn" data-action="decrease">-10</button>
         <input type="number" 
@@ -1743,12 +1758,6 @@ if (__orderForm) __orderForm.addEventListener("submit", async function (e) {
         if (typeof updateStarDiscount === 'function') {
           updateStarDiscount(0, total);
         }
-        try {
-          const balKey = 'certStarsBalance';
-          const prevBal = parseInt(localStorage.getItem(balKey) || '0', 10) || 0;
-          const newBal = Math.max(0, prevBal - certStarsUsed);
-          localStorage.setItem(balKey, String(newBal));
-        } catch (_) {}
       }
     }
   } catch (e) {
@@ -2088,7 +2097,7 @@ function getFilteredProducts(){
   
   // Затем фильтр по категории
   if (currentCategory !== 'all') {
-    filtered = filtered.filter(p => (p.category || 'Інші товари') === currentCategory);
+    filtered = filtered.filter(p => categoriesEqual(productCategoryLabel(p), currentCategory));
   }
 
   // Сортування
@@ -3694,7 +3703,7 @@ function updateCategoryPanel() {
   if (!categoryList || categoryList.tagName !== 'UL') return;
 
   // Собираем уникальные категории
-  const categories = [...new Set(allProducts.map(p => p.category || 'Інше'))];
+  const categories = getCategoriesFromProducts();
   
   // Очищаем список категорий
   categoryList.innerHTML = '';

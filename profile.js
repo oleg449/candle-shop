@@ -393,8 +393,11 @@ async function redeemCertificateCode() {
         const ud = getUserData();
         if (ud && ud.user) {
             ud.user.bonusStars = data.bonusStars || (ud.user.bonusStars || 0) + (data.starsAdded || 0);
+            ud.user.certificateBonusStars = data.certificateBonusStars || 0;
+            ud.user.regularBonusStars = data.regularBonusStars || Math.max(0, (ud.user.bonusStars || 0) - (ud.user.certificateBonusStars || 0));
             localStorage.setItem('userData', JSON.stringify(ud.user));
         }
+        try { localStorage.setItem('certStarsBalance', String(data.certificateBonusStars || 0)); } catch (_) {}
 
         // Mark this promo code as redeemed in localStorage so it disappears from the inactive list
         try {

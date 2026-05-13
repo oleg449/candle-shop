@@ -143,7 +143,9 @@ app.use('/uploads', express.static(UPLOADS_DIR, {
 app.get('/:file(products.json|masterclasses.json|sets.json)', (req, res) => {
   const config = adminDataFiles[req.params.file.replace('.json', '')];
   if (!config) return res.status(404).send('Not found');
-  res.json(readJsonFile(config.file, config.fallback));
+  let data = readJsonFile(config.file, config.fallback);
+  if (req.params.file === 'products.json') data = normalizeProductCategories(data);
+  res.json(data);
 });
 
 app.use((req, res, next) => {
@@ -499,6 +501,47 @@ function itemHasImage(resource, item) {
   if (!['products', 'sets', 'masterclasses'].includes(resource)) return true;
   if (resource === 'masterclasses') return !!String(item && item.image || '').trim();
   return Array.isArray(item && item.images) && item.images.some(src => String(src || '').trim());
+}
+
+function normalizeCategoryText(value) {
+  return String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function categoryKey(value) {
+  return normalizeCategoryText(value)
+    .toLocaleLowerCase('uk-UA')
+    .normalize('NFKC');
+}
+
+function canonicalCategoryFor(items, category, skipIndex = -1) {
+  const cleaned = normalizeCategoryText(category) || 'Інші товари';
+  const key = categoryKey(cleaned);
+  const existing = (Array.isArray(items) ? items : []).find((item, index) => (
+    index !== skipIndex && categoryKey(item && item.category) === key
+  ));
+  return existing && normalizeCategoryText(existing.category) ? normalizeCategoryText(existing.category) : cleaned;
+}
+
+function normalizeProductCategory(item, items, skipIndex = -1) {
+  if (!item || typeof item !== 'object') return item;
+  return {
+    ...item,
+    category: canonicalCategoryFor(items, item.category, skipIndex)
+  };
+}
+
+function normalizeProductCategories(items) {
+  if (!Array.isArray(items)) return items;
+  const canonicalByKey = new Map();
+  return items.map((item) => {
+    if (!item || typeof item !== 'object') return item;
+    const cleaned = normalizeCategoryText(item.category) || 'Інші товари';
+    const key = categoryKey(cleaned);
+    if (!canonicalByKey.has(key)) canonicalByKey.set(key, cleaned);
+    return { ...item, category: canonicalByKey.get(key) };
+  });
 }
 
 function getFileMtimeSeconds(fileName) {
@@ -987,7 +1030,8 @@ app.get('/api/admin/data/:resource', requireAdminPanelAccess, (req, res) => {
   const config = getAdminFileConfig(req.params.resource);
   if (!config) return res.status(404).json({ error: 'Unknown resource' });
   try {
-    const data = readJsonFile(config.file, config.fallback);
+    let data = readJsonFile(config.file, config.fallback);
+    if (req.params.resource === 'products') data = normalizeProductCategories(data);
     res.json(req.params.resource === 'admins' && Array.isArray(data) ? data.map(normalizeAdminRecord) : data);
   } catch (err) {
     res.status(500).json({ error: 'Failed to load resource' });
@@ -1018,6 +1062,8 @@ app.post('/api/admin/data/:resource', requireAdminPanelAccess, (req, res) => {
         return res.status(403).json({ error: 'Cannot edit own permissions without super admin role' });
       }
       item = normalizeAdminRecord(item);
+    } else if (req.params.resource === 'products') {
+      item = normalizeProductCategory(item, items);
     }
     if (!itemHasImage(req.params.resource, item)) {
       return res.status(400).json({ error: 'Додайте хоча б одне фото перед збереженням' });
@@ -1026,7 +1072,8 @@ app.post('/api/admin/data/:resource', requireAdminPanelAccess, (req, res) => {
       item.id = String(Date.now());
     }
     items.push(item);
-    writeJsonFile(config.file, items);
+    const nextItems = req.params.resource === 'products' ? normalizeProductCategories(items) : items;
+    writeJsonFile(config.file, nextItems);
     res.status(201).json(item);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create item' });
@@ -1052,13 +1099,16 @@ app.put('/api/admin/data/:resource/:id', requireAdminPanelAccess, (req, res) => 
         return res.status(403).json({ error: 'Cannot edit own permissions without super admin role' });
       }
       nextItem = normalizeAdminRecord(nextItem);
+    } else if (req.params.resource === 'products') {
+      nextItem = normalizeProductCategory(nextItem, items, idx);
     }
     if (!itemHasImage(req.params.resource, nextItem)) {
       return res.status(400).json({ error: 'Додайте хоча б одне фото перед збереженням' });
     }
     items[idx] = nextItem;
-    writeJsonFile(config.file, items);
-    res.json(items[idx]);
+    const nextItems = req.params.resource === 'products' ? normalizeProductCategories(items) : items;
+    writeJsonFile(config.file, nextItems);
+    res.json(nextItem);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update item' });
   }
@@ -1180,7 +1230,7 @@ function confirmPendingOrder(row, callback, orderContext = null) {
       stmt.finalize();
     }
     if (addStars > 0) {
-      db.run('UPDATE users SET bonusStars = bonusStars + ? WHERE id = ?', [addStars, userId]);
+        db.run('UPDATE users SET bonusStars = bonusStars + ? WHERE id = ?', [addStars, userId]);
     }
     certificates.forEach(cert => {
       const starsCount = parseInt(cert.stars, 10) || 0;
@@ -1497,7 +1547,7 @@ app.delete('/api/admin/orders', requireAdminPermission('orders'), (req, res) => 
 app.get('/api/admin/users', requireAdminPermission('users'), (req, res) => {
   const admins = readAdminsFile();
   db.all(
-    `SELECT id, username, email, firstName, lastName, phone, telegram, address, bonusStars, created_at
+    `SELECT id, username, email, firstName, lastName, phone, telegram, address, bonusStars, certificateBonusStars, created_at
      FROM users
      ORDER BY id DESC`,
     [],
@@ -1790,6 +1840,7 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
       telegram TEXT,
       address TEXT,
       bonusStars INTEGER DEFAULT 0,
+      certificateBonusStars INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
@@ -1799,6 +1850,12 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
       if (!hasTelegram) {
         db.run(`ALTER TABLE users ADD COLUMN telegram TEXT`, (e2) => {
           if (e2) console.warn('ALTER TABLE add users telegram failed (may already exist):', e2.message);
+        });
+      }
+      const hasCertificateBonusStars = Array.isArray(rows) && rows.some(r => String(r.name) === 'certificateBonusStars');
+      if (!hasCertificateBonusStars) {
+        db.run(`ALTER TABLE users ADD COLUMN certificateBonusStars INTEGER DEFAULT 0`, (e2) => {
+          if (e2) console.warn('ALTER TABLE add users certificateBonusStars failed (may already exist):', e2.message);
         });
       }
     });
@@ -2190,7 +2247,9 @@ app.post('/api/register', [
               email: email,
               firstName: firstName,
               lastName: lastName,
-              bonusStars: 0
+              bonusStars: 0,
+              certificateBonusStars: 0,
+              regularBonusStars: 0
             }
           });
         }
@@ -2251,7 +2310,9 @@ app.post('/api/login', [
           lastName: user.lastName,
           phone: user.phone,
           address: user.address,
-          bonusStars: user.bonusStars
+          bonusStars: user.bonusStars,
+          certificateBonusStars: user.certificateBonusStars || 0,
+          regularBonusStars: Math.max(0, (user.bonusStars || 0) - (user.certificateBonusStars || 0))
         }
       });
     });
@@ -2350,12 +2411,18 @@ app.post('/api/certificates/redeem', authenticateToken, (req, res) => {
       db.serialize(() => {
         db.run('BEGIN TRANSACTION');
         db.run('UPDATE certificate_codes SET redeemed_by_user = ?, redeemed_at = CURRENT_TIMESTAMP WHERE code = ?', [userId, code]);
-        db.run('UPDATE users SET bonusStars = bonusStars + ? WHERE id = ?', [stars, userId]);
+        db.run('UPDATE users SET bonusStars = bonusStars + ?, certificateBonusStars = certificateBonusStars + ? WHERE id = ?', [stars, stars, userId]);
         db.run('COMMIT', (commitErr) => {
           if (commitErr) return res.status(500).json({ error: 'Помилка сервера' });
-          db.get('SELECT bonusStars FROM users WHERE id = ?', [userId], (e2, u) => {
+          db.get('SELECT bonusStars, certificateBonusStars FROM users WHERE id = ?', [userId], (e2, u) => {
             if (e2 || !u) return res.json({ success: true, starsAdded: stars });
-            res.json({ success: true, starsAdded: stars, bonusStars: u.bonusStars });
+            res.json({
+              success: true,
+              starsAdded: stars,
+              bonusStars: u.bonusStars,
+              certificateBonusStars: u.certificateBonusStars || 0,
+              regularBonusStars: Math.max(0, (u.bonusStars || 0) - (u.certificateBonusStars || 0))
+            });
           });
         });
       });
@@ -2391,7 +2458,7 @@ app.post('/api/user/masterclasses/grant', authenticateToken, (req, res) => {
 app.get('/api/user/stars', authenticateToken, (req, res) => {
   const userId = req.user.id;
   
-  db.get('SELECT bonusStars FROM users WHERE id = ?', [userId], (err, user) => {
+  db.get('SELECT bonusStars, certificateBonusStars FROM users WHERE id = ?', [userId], (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -2400,7 +2467,13 @@ app.get('/api/user/stars', authenticateToken, (req, res) => {
       return res.status(404).json({ error: 'Користувач не знайдений' });
     }
     
-    res.json({ bonusStars: user.bonusStars || 0 });
+    const bonusStars = user.bonusStars || 0;
+    const certificateBonusStars = user.certificateBonusStars || 0;
+    res.json({
+      bonusStars,
+      certificateBonusStars,
+      regularBonusStars: Math.max(0, bonusStars - certificateBonusStars)
+    });
   });
 });
 
@@ -2408,8 +2481,9 @@ app.get('/api/user/stars', authenticateToken, (req, res) => {
 app.post('/api/user/stars', authenticateToken, (req, res) => {
   const userId = req.user.id;
   const { action, amount } = req.body;
+  const starsToSpend = Math.max(0, parseInt(amount, 10) || 0);
   
-  if (!action || !amount || amount <= 0) {
+  if (!action || starsToSpend <= 0) {
     return res.status(400).json({ error: 'Невірні параметри' });
   }
   if (action !== 'subtract') {
@@ -2419,7 +2493,7 @@ app.post('/api/user/stars', authenticateToken, (req, res) => {
   }
   
   // First get current stars
-  db.get('SELECT bonusStars FROM users WHERE id = ?', [userId], (err, user) => {
+  db.get('SELECT bonusStars, certificateBonusStars FROM users WHERE id = ?', [userId], (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -2429,19 +2503,30 @@ app.post('/api/user/stars', authenticateToken, (req, res) => {
     }
     
     const currentStars = user.bonusStars || 0;
-    let newStars;
-    
-    newStars = Math.max(0, currentStars - amount);
-    
-    // Update stars
-    db.run('UPDATE users SET bonusStars = ? WHERE id = ?', [newStars, userId], function(err) {
+    const certificateStars = Math.max(0, user.certificateBonusStars || 0);
+    if (currentStars < starsToSpend) {
+      return res.status(400).json({ error: 'Недостатньо бонусних зірок' });
+    }
+    const certificateToUse = Math.min(certificateStars, starsToSpend);
+    const regularToUse = starsToSpend - certificateToUse;
+    if (regularToUse > 60) {
+      return res.status(400).json({ error: 'За одне замовлення можна використати до 60 звичайних бонусних зірок. Зірки з промокоду без ліміту.' });
+    }
+    const newStars = currentStars - starsToSpend;
+    const newCertificateStars = certificateStars - certificateToUse;
+
+    db.run('UPDATE users SET bonusStars = ?, certificateBonusStars = ? WHERE id = ?', [newStars, newCertificateStars, userId], function(err) {
       if (err) {
         return res.status(500).json({ error: 'Помилка сервера' });
       }
       
       res.json({ 
         bonusStars: newStars,
-        message: `Використано ${amount} зірок`
+        certificateBonusStars: newCertificateStars,
+        regularBonusStars: Math.max(0, newStars - newCertificateStars),
+        certificateStarsUsed: certificateToUse,
+        regularStarsUsed: regularToUse,
+        message: `Використано ${starsToSpend} зірок`
       });
     });
   });
@@ -2456,7 +2541,7 @@ app.post('/api/user/stars/purchase', authenticateToken, (req, res) => {
 
 // Get user profile (protected route)
 app.get('/api/profile', authenticateToken, (req, res) => {
-  db.get('SELECT id, username, email, firstName, lastName, phone, address, bonusStars FROM users WHERE id = ?', 
+  db.get('SELECT id, username, email, firstName, lastName, phone, address, bonusStars, certificateBonusStars FROM users WHERE id = ?', 
     [req.user.id], (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
@@ -2466,6 +2551,8 @@ app.get('/api/profile', authenticateToken, (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    user.certificateBonusStars = user.certificateBonusStars || 0;
+    user.regularBonusStars = Math.max(0, (user.bonusStars || 0) - user.certificateBonusStars);
     user.isAdmin = isSiteAdmin(user);
     res.json({ user });
   });
@@ -2526,10 +2613,10 @@ app.post('/api/bonus/add', authenticateToken, [
 app.post('/api/bonus/use', authenticateToken, [
   body('stars').isInt({ min: 1 }).withMessage('Stars must be a positive integer')
 ], (req, res) => {
-  const { stars } = req.body;
+  const stars = Math.max(0, parseInt(req.body && req.body.stars, 10) || 0);
 
   // First check if user has enough stars
-  db.get('SELECT bonusStars FROM users WHERE id = ?', [req.user.id], (err, user) => {
+  db.get('SELECT bonusStars, certificateBonusStars FROM users WHERE id = ?', [req.user.id], (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -2538,10 +2625,16 @@ app.post('/api/bonus/use', authenticateToken, [
       return res.status(400).json({ error: 'Insufficient bonus stars' });
     }
 
-    // Deduct stars
+    const certificateStars = Math.max(0, user.certificateBonusStars || 0);
+    const certificateToUse = Math.min(certificateStars, stars);
+    const regularToUse = stars - certificateToUse;
+    if (regularToUse > 60) {
+      return res.status(400).json({ error: 'За одне замовлення можна використати до 60 звичайних бонусних зірок. Зірки з промокоду без ліміту.' });
+    }
+
     db.run(
-      'UPDATE users SET bonusStars = bonusStars - ? WHERE id = ?',
-      [stars, req.user.id],
+      'UPDATE users SET bonusStars = bonusStars - ?, certificateBonusStars = certificateBonusStars - ? WHERE id = ?',
+      [stars, certificateToUse, req.user.id],
       function(err) {
         if (err) {
           return res.status(500).json({ error: 'Error using bonus stars' });
@@ -2549,7 +2642,11 @@ app.post('/api/bonus/use', authenticateToken, [
 
         res.json({ 
           message: 'Bonus stars used successfully',
-          bonusStars: user.bonusStars - stars 
+          bonusStars: user.bonusStars - stars,
+          certificateBonusStars: certificateStars - certificateToUse,
+          regularBonusStars: Math.max(0, (user.bonusStars - stars) - (certificateStars - certificateToUse)),
+          certificateStarsUsed: certificateToUse,
+          regularStarsUsed: regularToUse
         });
       }
     );

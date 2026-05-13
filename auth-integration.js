@@ -20,6 +20,9 @@ function storeUserData(user) {
         localStorage.removeItem('userData');
         return;
     }
+    if (typeof user.certificateBonusStars === 'number') {
+        localStorage.setItem('certStarsBalance', String(Math.max(0, user.certificateBonusStars)));
+    }
     localStorage.setItem('userData', JSON.stringify(user));
 }
 
@@ -45,6 +48,7 @@ function setSessionActive(isActive) {
 function clearUserData() {
     localStorage.removeItem('userData');
     localStorage.removeItem('authToken'); // legacy cleanup
+    localStorage.removeItem('certStarsBalance');
     setSessionActive(false);
 }
 
@@ -489,7 +493,9 @@ async function syncBonusStars() {
         if (response.ok) {
             const data = await response.json();
             const stars = data.bonusStars || 0;
+            const certificateStars = data.certificateBonusStars || 0;
             window.bonusStars = stars;
+            try { localStorage.setItem('certStarsBalance', String(certificateStars)); } catch (_) {}
             const bonusElement = document.getElementById('bonusStars');
             const bonusElementMobile = document.getElementById('bonusStarsMobile');
             const userStarsSide = document.getElementById('userStarsSide');
@@ -500,6 +506,8 @@ async function syncBonusStars() {
             const stored = getUserData();
             if (stored && stored.user) {
                 stored.user.bonusStars = stars;
+                stored.user.certificateBonusStars = certificateStars;
+                stored.user.regularBonusStars = data.regularBonusStars || Math.max(0, stars - certificateStars);
                 storeUserData(stored.user);
             }
         }
@@ -535,6 +543,8 @@ async function useBonusStarsForDiscount(stars) {
         if (response.ok) {
             const data = await response.json();
             window.bonusStars = data.bonusStars;
+            const certificateStars = data.certificateBonusStars || 0;
+            try { localStorage.setItem('certStarsBalance', String(certificateStars)); } catch (_) {}
             const bonusElement = document.getElementById('bonusStars');
             const bonusElementMobile = document.getElementById('bonusStarsMobile');
             const userStarsSide = document.getElementById('userStarsSide');
@@ -545,6 +555,8 @@ async function useBonusStarsForDiscount(stars) {
             const stored = getUserData();
             if (stored && stored.user) {
                 stored.user.bonusStars = data.bonusStars;
+                stored.user.certificateBonusStars = certificateStars;
+                stored.user.regularBonusStars = data.regularBonusStars || Math.max(0, (data.bonusStars || 0) - certificateStars);
                 storeUserData(stored.user);
             }
 
