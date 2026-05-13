@@ -1316,6 +1316,11 @@ nav a {
   margin: 0 0 1rem;
   font-size: 0.95rem;
   color: var(--muted);
+  min-height: 1.35em;
+}
+
+.product .price-placeholder {
+  visibility: hidden;
 }
 
 .product img {

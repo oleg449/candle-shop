@@ -2793,9 +2793,11 @@ function createProductCard(product) {
 
   // Price container (hide for custom candle)
   const price = document.createElement("p");
+  price.className = "price";
   if (productData.title === 'Свічка під замовлення') {
     // do not render static price here
-    price.style.display = 'none';
+    price.textContent = `${productData.price || 0} РіСЂРЅ`;
+    price.classList.add('price-placeholder');
   } else if (hasDiscount) {
     const originalPriceSpan = document.createElement("span");
     originalPriceSpan.style.textDecoration = 'line-through';
