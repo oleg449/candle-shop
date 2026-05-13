@@ -2758,11 +2758,14 @@ function createProductCard(product) {
   }
 
   // Product image
+  const imageWrap = document.createElement("div");
+  imageWrap.className = "product-image";
   const img = document.createElement("img");
   img.src = productData.images[0];
   img.alt = productData.title;
   img.addEventListener("click", () => openProductModal(productData.title));
-  card.appendChild(img);
+  imageWrap.appendChild(img);
+  card.appendChild(imageWrap);
 
   // Product title
   const title = document.createElement("h3");
