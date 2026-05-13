@@ -129,18 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openChat() {
-    if (!supportChat) return;
-    if (!isLoggedIn()) {
-      window.location.href = 'auth.html';
-      return;
-    }
-    supportChat.classList.add('active');
-    supportChat.style.display = 'block';
-    supportChatBackdrop?.classList.add('active');
-    setBadge(0);
-    loadMessages().catch(console.error);
-    clearInterval(pollTimer);
-    pollTimer = setInterval(() => loadMessages().catch(console.error), 15000);
+    window.location.href = 'messages.html';
   }
 
   function closeChat() {
