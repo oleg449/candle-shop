@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат з адміністратором</title>
+    <link rel="stylesheet" href="chat.css">
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Чат з адміністратором</h2>
+            <button id="closeChat">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Повідомлення чату будуть тут -->
+        </div>
+        <div class="chat-input">
+            <textarea id="messageInput" placeholder="Введіть ваше повідомлення..."></textarea>
+            <button id="sendMessage">Надіслати</button>
+        </div>
+    </div>
+
+    <script src="auth-integration.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

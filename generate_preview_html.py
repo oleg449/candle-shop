@@ -1,0 +1,127 @@
+from pathlib import Path
+from textwrap import dedent
+
+# Создание структуры проекта для Selenium preview
+base_dir = Path("C:/Users/supeg/Desktop/Свечи сайт/preview")
+html_dir = base_dir / "site"
+html_dir.mkdir(parents=True, exist_ok=True)
+
+# Содержимое preview.html (с карточкой и модальным окном)
+html_content = dedent("""
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Превʼю товару</title>
+  css = Path("C:/Users/supeg/Desktop/Свечи сайт/preview/site/style.css").read_text(encoding="utf-8")
+html_content = html_content.replace(
+    '<link rel="stylesheet" href="style.css" />',
+    f"<style>\n{css}\n</style>"
+)
+
+  <style>
+    .product {
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 20px auto;
+      font-family: sans-serif;
+    }
+    .product img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .product h3 {
+      margin: 10px 0 5px;
+    }
+    .product p {
+      margin: 5px 0;
+    }
+    .modal {
+      display: block;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .modal img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .modal h2 {
+      margin: 15px 0 10px;
+    }
+    .modal-tabs {
+      display: flex;
+      justify-content: space-around;
+      margin: 15px 0;
+    }
+    .modal-tabs button {
+      flex: 1;
+      background: #eee;
+      border: none;
+      padding: 5px;
+      margin: 0 2px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .tab-section {
+      display: none;
+    }
+    .tab-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="product">
+    <img src="images/example.jpg" />
+    <h3>Свічка "Тропічна фантазія"</h3>
+    <p>Ціна: 250 грн</p>
+    <p>Опис: Ароматна свічка з натурального воску.</p>
+  </div>
+
+  <div class="modal">
+    <img src="images/example.jpg" />
+    <h2>Свічка "Тропічна фантазія"</h2>
+    <div class="modal-tabs">
+      <button onclick="switchTab('description')" class="tab-button active">Опис</button>
+      <button onclick="switchTab('reviews')" class="tab-button">Відгуки</button>
+      <button onclick="switchTab('specs')" class="tab-button">Характеристики</button>
+    </div>
+    <div class="tab-section active" id="description">
+      <p>Ароматна свічка для релаксу та затишку.</p>
+    </div>
+    <div class="tab-section" id="reviews">
+      <ul><li>Дуже приємний аромат!</li><li>Купуватиму ще!</li></ul>
+    </div>
+    <div class="tab-section" id="specs">
+      <ul><li>Матеріал: натуральний віск</li><li>Аромат: тропічний</li><li>Час горіння: ~30 год</li></ul>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-section").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+
+      document.querySelectorAll(".tab-button").forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
+    }
+  </script>
+</body>
+</html>
+""")
+
+# Сохраняем HTML файл
+html_file = html_dir / "preview.html"
+html_file.write_text(html_content, encoding="utf-8")
+
+html_file.relative_to("/mnt/data")

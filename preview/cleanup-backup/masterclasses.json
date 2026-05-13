@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Тестовий майстерклас",
+    "description": "Тестовий майстерклас",
+    "duration": "2 години",
+    "level": "Початковий",
+    "price": 999,
+    "image": "images/masterclass_1757003681.jpg",
+    "video_url": "https://youtu.be/OPiIvAU7FtQ",
+    "id": "1757003686"
+  }
+]

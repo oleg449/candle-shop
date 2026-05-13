@@ -1,0 +1,62 @@
+{
+  "p_mp3k7w2t_frdcp5pg": {
+    "id": "p_mp3k7w2t_frdcp5pg",
+    "orderId": "Omp3k7w2r-1c33",
+    "pendingId": "p_mp3k7w2t_frdcp5pg",
+    "user_id": 7,
+    "status": "оплачено",
+    "created_at": 1778646527,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp3k7w2r-1c33*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка          🌿Бавовна та Ірис🌿 — ₴225 × 1 = ₴225\n\n💰 *Разом:* ₴225\n\nPID: p_mp3k7w2t_frdcp5pg",
+      "total": 225,
+      "final_total": 225,
+      "stars_used": 0,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 225,
+    "final_total": 225,
+    "stars_used": 0,
+    "items": [
+      {
+        "title": "Свічка          🌿Бавовна та Ірис🌿",
+        "quantity": 1,
+        "price": 225,
+        "total": 225,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp3k7w2r-1c33*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка          🌿Бавовна та Ірис🌿 — ₴225 × 1 = ₴225\n\n💰 *Разом:* ₴225\n\nPID: p_mp3k7w2t_frdcp5pg",
+    "history": [
+      {
+        "ts": 1778646527,
+        "status": "нове",
+        "by": 7
+      },
+      {
+        "ts": 1778646560,
+        "status": "оплачено",
+        "by": 6
+      }
+    ],
+    "pending_confirmed_id": "p_mp3k7w2t_frdcp5pg",
+    "bonus_awarded_at": 1778646560,
+    "bonus_stars_added": 10
+  }
+}

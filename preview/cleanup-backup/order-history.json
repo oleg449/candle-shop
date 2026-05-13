@@ -1,0 +1,730 @@
+{
+  "p_mouliwjf_wxkm1kwj": {
+    "id": "p_mouliwjf_wxkm1kwj",
+    "orderId": "Omouliwje-y6a",
+    "pendingId": "p_mouliwjf_wxkm1kwj",
+    "user_id": 7,
+    "status": "виконано",
+    "created_at": 1778104525,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omouliwje-y6a*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Сертифікат 250 ⭐ — ₴250 × 1 = ₴250\n\n💰 *Разом:* ₴250\n\nPID: p_mouliwjf_wxkm1kwj",
+      "total": 250,
+      "final_total": 250,
+      "stars_used": 0,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 250,
+    "final_total": 250,
+    "stars_used": 0,
+    "items": [
+      {
+        "title": "Сертифікат 250 ⭐",
+        "quantity": 1,
+        "price": 250,
+        "total": 250,
+        "isSet": false,
+        "isCertificate": true,
+        "certificateStars": 250,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omouliwje-y6a*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Сертифікат 250 ⭐ — ₴250 × 1 = ₴250\n\n💰 *Разом:* ₴250\n\nPID: p_mouliwjf_wxkm1kwj",
+    "history": [
+      {
+        "ts": 1778104525,
+        "status": "нове",
+        "by": 7
+      },
+      {
+        "ts": 1778104613,
+        "status": "виконано",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778104613,
+    "history_reason": "completed",
+    "history_by": 6,
+    "active": false,
+    "pending_confirmed_id": "p_mouliwjf_wxkm1kwj",
+    "bonus_awarded_at": 1778104613,
+    "bonus_stars_added": 10,
+    "archived_at": 1778104613
+  },
+  "p_mouqwo26_c3iiqvli": {
+    "id": "p_mouqwo26_c3iiqvli",
+    "orderId": "Omouqwo1z-1k6h",
+    "pendingId": "p_mouqwo26_c3iiqvli",
+    "user_id": 7,
+    "status": "виконано",
+    "created_at": 1778113565,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omouqwo1z-1k6h*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Сертифікат 500 ⭐ — ₴500 × 1 = ₴500\n\n💰 *Разом:* ₴500\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴440\n\nPID: p_mouqwo26_c3iiqvli",
+      "total": 500,
+      "final_total": 440,
+      "stars_used": 60,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 500,
+    "final_total": 440,
+    "stars_used": 60,
+    "items": [
+      {
+        "title": "Сертифікат 500 ⭐",
+        "quantity": 1,
+        "price": 500,
+        "total": 500,
+        "isSet": false,
+        "isCertificate": true,
+        "certificateStars": 500,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omouqwo1z-1k6h*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Сертифікат 500 ⭐ — ₴500 × 1 = ₴500\n\n💰 *Разом:* ₴500\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴440\n\nPID: p_mouqwo26_c3iiqvli",
+    "history": [
+      {
+        "ts": 1778113565,
+        "status": "нове",
+        "by": 7
+      },
+      {
+        "ts": 1778113596,
+        "status": "виконано",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778113597,
+    "history_reason": "completed",
+    "history_by": 6,
+    "active": false,
+    "pending_confirmed_id": "p_mouqwo26_c3iiqvli",
+    "bonus_awarded_at": 1778113597,
+    "bonus_stars_added": 10,
+    "archived_at": 1778113597
+  },
+  "p_mouyktfs_9viqfgdo": {
+    "id": "p_mouyktfs_9viqfgdo",
+    "orderId": "Omouyktfq-1h9b",
+    "pendingId": "p_mouyktfs_9viqfgdo",
+    "user_id": 7,
+    "status": "виконано",
+    "created_at": 1778126449,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omouyktfq-1h9b*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка     🍷✨Гранатовий сидр✨ — ₴175 × 1 = ₴175\n\n💰 *Разом:* ₴175\n\nPID: p_mouyktfs_9viqfgdo",
+      "total": 175,
+      "final_total": 175,
+      "stars_used": 0,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 175,
+    "final_total": 175,
+    "stars_used": 0,
+    "items": [
+      {
+        "title": "Свічка     🍷✨Гранатовий сидр✨",
+        "quantity": 1,
+        "price": 175,
+        "total": 175,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omouyktfq-1h9b*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка     🍷✨Гранатовий сидр✨ — ₴175 × 1 = ₴175\n\n💰 *Разом:* ₴175\n\nPID: p_mouyktfs_9viqfgdo",
+    "history": [
+      {
+        "ts": 1778126449,
+        "status": "нове",
+        "by": 7
+      },
+      {
+        "ts": 1778134262,
+        "status": "оплачено",
+        "by": 6
+      },
+      {
+        "ts": 1778136155,
+        "status": "виконано",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778136155,
+    "history_reason": "completed",
+    "history_by": 6,
+    "active": false,
+    "pending_confirmed_id": "p_mouyktfs_9viqfgdo",
+    "bonus_awarded_at": 1778134262,
+    "bonus_stars_added": 10,
+    "archived_at": 1778136155
+  },
+  "p_mov4ob5k_1306s0rh": {
+    "id": "p_mov4ob5k_1306s0rh",
+    "orderId": "Omov4ob5l-xcn",
+    "pendingId": "p_mov4ob5k_1306s0rh",
+    "user_id": 7,
+    "status": "оплачено",
+    "created_at": 1778136690,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omov4ob5l-xcn*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка          🌿Бавовна та Ірис🌿 — ₴225 × 1 = ₴225\n\n💰 *Разом:* ₴225\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴165\n\nPID: p_mov4ob5k_1306s0rh",
+      "total": 225,
+      "final_total": 165,
+      "stars_used": 60,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 225,
+    "final_total": 165,
+    "stars_used": 60,
+    "items": [
+      {
+        "title": "Свічка          🌿Бавовна та Ірис🌿",
+        "quantity": 1,
+        "price": 225,
+        "total": 225,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omov4ob5l-xcn*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка          🌿Бавовна та Ірис🌿 — ₴225 × 1 = ₴225\n\n💰 *Разом:* ₴225\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴165\n\nPID: p_mov4ob5k_1306s0rh",
+    "history": [
+      {
+        "ts": 1778136690,
+        "status": "нове",
+        "by": 7
+      },
+      {
+        "ts": 1778136727,
+        "status": "оплачено",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778136727,
+    "history_reason": "status",
+    "history_by": 6,
+    "active": true,
+    "pending_confirmed_id": "p_mov4ob5k_1306s0rh",
+    "bonus_awarded_at": 1778136727,
+    "bonus_stars_added": 10
+  },
+  "p_mov4pqu5_3c4fv6bt": {
+    "id": "p_mov4pqu5_3c4fv6bt",
+    "orderId": "Omov4pqu5-1bjw",
+    "pendingId": "p_mov4pqu5_3c4fv6bt",
+    "user_id": 7,
+    "status": "оплачено",
+    "created_at": 1778136757,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omov4pqu5-1bjw*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка          🌿Бавовна та Ірис🌿 — ₴225 × 1 = ₴225\n\n💰 *Разом:* ₴225\n\nPID: p_mov4pqu5_3c4fv6bt",
+      "total": 225,
+      "final_total": 225,
+      "stars_used": 0,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 225,
+    "final_total": 225,
+    "stars_used": 0,
+    "items": [
+      {
+        "title": "Свічка          🌿Бавовна та Ірис🌿",
+        "quantity": 1,
+        "price": 225,
+        "total": 225,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omov4pqu5-1bjw*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка          🌿Бавовна та Ірис🌿 — ₴225 × 1 = ₴225\n\n💰 *Разом:* ₴225\n\nPID: p_mov4pqu5_3c4fv6bt",
+    "history": [
+      {
+        "ts": 1778136757,
+        "status": "нове",
+        "by": 7
+      },
+      {
+        "ts": 1778136769,
+        "status": "оплачено",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778136769,
+    "history_reason": "status",
+    "history_by": 6,
+    "active": true,
+    "pending_confirmed_id": "p_mov4pqu5_3c4fv6bt",
+    "bonus_awarded_at": 1778136769,
+    "bonus_stars_added": 10
+  },
+  "p_mov559va_cjeiopa5": {
+    "id": "p_mov559va_cjeiopa5",
+    "orderId": "Omov559v9-s8a",
+    "pendingId": "p_mov559va_cjeiopa5",
+    "user_id": 6,
+    "status": "оплачено",
+    "created_at": 1778137481,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omov559v9-s8a*\n\nUID: 6\n👤 ПІБ: Матюшкин Кирило\n💬 Telegram: @1111111\n🏙 Місто: Дніпро\n🏤 Відділення: 11\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка під замовлення — ₴325 × 1 = ₴325\n   🧾 Матеріал: Соєвий\n   🎨 Колір: Жовтий\n   📦 Об'єм: 100 мл\n   🌸 Аромат: Ваніль\n\n💰 *Разом:* ₴325\n⭐ Знижка зірками: 10 (сертифікат: 0, звичайні: 10) (−₴10)\n✅ До сплати: ₴315\n\nPID: p_mov559va_cjeiopa5",
+      "total": 325,
+      "final_total": 315,
+      "stars_used": 10,
+      "customer": "Матюшкин Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "11",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@1111111"
+    },
+    "customer": "Матюшкин Кирило",
+    "total": 325,
+    "final_total": 315,
+    "stars_used": 10,
+    "items": [
+      {
+        "title": "Свічка під замовлення",
+        "quantity": 1,
+        "price": 325,
+        "total": 325,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": true,
+        "material": "soy",
+        "color": "yellow",
+        "volume": "100 мл",
+        "aroma": "Ваніль",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omov559v9-s8a*\n\nUID: 6\n👤 ПІБ: Матюшкин Кирило\n💬 Telegram: @1111111\n🏙 Місто: Дніпро\n🏤 Відділення: 11\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка під замовлення — ₴325 × 1 = ₴325\n   🧾 Матеріал: Соєвий\n   🎨 Колір: Жовтий\n   📦 Об'єм: 100 мл\n   🌸 Аромат: Ваніль\n\n💰 *Разом:* ₴325\n⭐ Знижка зірками: 10 (сертифікат: 0, звичайні: 10) (−₴10)\n✅ До сплати: ₴315\n\nPID: p_mov559va_cjeiopa5",
+    "history": [
+      {
+        "ts": 1778137481,
+        "status": "нове",
+        "by": 6
+      },
+      {
+        "ts": 1778142190,
+        "status": "оплачено",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778142190,
+    "history_reason": "status",
+    "history_by": 6,
+    "active": true,
+    "pending_confirmed_id": "p_mov559va_cjeiopa5",
+    "bonus_awarded_at": 1778142190,
+    "bonus_stars_added": 10
+  },
+  "p_mp2qme82_ov2jo2in": {
+    "id": "p_mp2qme82_ov2jo2in",
+    "orderId": "Omp2qme80-tt3",
+    "pendingId": "p_mp2qme82_ov2jo2in",
+    "user_id": 7,
+    "status": "нове",
+    "created_at": 1778596815,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp2qme80-tt3*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴290\n\nPID: p_mp2qme82_ov2jo2in",
+      "total": 350,
+      "final_total": 290,
+      "stars_used": 60,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 350,
+    "final_total": 290,
+    "stars_used": 60,
+    "items": [
+      {
+        "title": "Свічка            🍋Limoncello Creme",
+        "quantity": 1,
+        "price": 350,
+        "total": 350,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp2qme80-tt3*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴290\n\nPID: p_mp2qme82_ov2jo2in",
+    "history": [
+      {
+        "ts": 1778596815,
+        "status": "нове",
+        "by": 7
+      }
+    ],
+    "history_saved_at": 1778596815,
+    "history_reason": "created",
+    "history_by": 7,
+    "active": true
+  },
+  "p_mp2qmfgi_rzdbfje5": {
+    "id": "p_mp2qmfgi_rzdbfje5",
+    "orderId": "Omp2qmfgh-1wej",
+    "pendingId": "p_mp2qmfgi_rzdbfje5",
+    "user_id": 7,
+    "status": "нове",
+    "created_at": 1778596817,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp2qmfgh-1wej*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴290\n\nPID: p_mp2qmfgi_rzdbfje5",
+      "total": 350,
+      "final_total": 290,
+      "stars_used": 60,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 350,
+    "final_total": 290,
+    "stars_used": 60,
+    "items": [
+      {
+        "title": "Свічка            🍋Limoncello Creme",
+        "quantity": 1,
+        "price": 350,
+        "total": 350,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp2qmfgh-1wej*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴290\n\nPID: p_mp2qmfgi_rzdbfje5",
+    "history": [
+      {
+        "ts": 1778596817,
+        "status": "нове",
+        "by": 7
+      }
+    ],
+    "history_saved_at": 1778596817,
+    "history_reason": "created",
+    "history_by": 7,
+    "active": true
+  },
+  "p_mp2qn2se_muq2rkdh": {
+    "id": "p_mp2qn2se_muq2rkdh",
+    "orderId": "Omp2qn2sd-iv4",
+    "pendingId": "p_mp2qn2se_muq2rkdh",
+    "user_id": 7,
+    "status": "нове",
+    "created_at": 1778596847,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp2qn2sd-iv4*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Арома-свічка           🥥Coconut🌴 — ₴280 × 1 = ₴280\n\n💰 *Разом:* ₴280\n⭐ Знижка зірками: 10 (сертифікат: 0, звичайні: 10) (−₴10)\n✅ До сплати: ₴270\n\nPID: p_mp2qn2se_muq2rkdh",
+      "total": 280,
+      "final_total": 270,
+      "stars_used": 10,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 280,
+    "final_total": 270,
+    "stars_used": 10,
+    "items": [
+      {
+        "title": "Арома-свічка           🥥Coconut🌴",
+        "quantity": 1,
+        "price": 280,
+        "total": 280,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp2qn2sd-iv4*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Арома-свічка           🥥Coconut🌴 — ₴280 × 1 = ₴280\n\n💰 *Разом:* ₴280\n⭐ Знижка зірками: 10 (сертифікат: 0, звичайні: 10) (−₴10)\n✅ До сплати: ₴270\n\nPID: p_mp2qn2se_muq2rkdh",
+    "history": [
+      {
+        "ts": 1778596847,
+        "status": "нове",
+        "by": 7
+      }
+    ],
+    "history_saved_at": 1778596847,
+    "history_reason": "created",
+    "history_by": 7,
+    "active": true
+  },
+  "p_mp2qw2yy_y38g78ma": {
+    "id": "p_mp2qw2yy_y38g78ma",
+    "orderId": "Omp2qw2yv-fpb",
+    "pendingId": "p_mp2qw2yy_y38g78ma",
+    "user_id": 7,
+    "status": "нове",
+    "created_at": 1778597267,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp2qw2yv-fpb*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n\nPID: p_mp2qw2yy_y38g78ma",
+      "total": 350,
+      "final_total": 350,
+      "stars_used": 0,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 350,
+    "final_total": 350,
+    "stars_used": 0,
+    "items": [
+      {
+        "title": "Свічка            🍋Limoncello Creme",
+        "quantity": 1,
+        "price": 350,
+        "total": 350,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp2qw2yv-fpb*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n\nPID: p_mp2qw2yy_y38g78ma",
+    "history": [
+      {
+        "ts": 1778597267,
+        "status": "нове",
+        "by": 7
+      }
+    ],
+    "history_saved_at": 1778597267,
+    "history_reason": "created",
+    "history_by": 7,
+    "active": true
+  },
+  "p_mp2qwmaw_zv2bx8t3": {
+    "id": "p_mp2qwmaw_zv2bx8t3",
+    "orderId": "Omp2qwmau-jkj",
+    "pendingId": "p_mp2qwmaw_zv2bx8t3",
+    "user_id": 7,
+    "status": "нове",
+    "created_at": 1778597292,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp2qwmau-jkj*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Арома-свічка           🥥Coconut🌴 — ₴280 × 1 = ₴280\n\n💰 *Разом:* ₴280\n\nPID: p_mp2qwmaw_zv2bx8t3",
+      "total": 280,
+      "final_total": 280,
+      "stars_used": 0,
+      "customer": "Матюшкін Кирило",
+      "city": "Дніпро",
+      "delivery": "Нова пошта",
+      "department": "67",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@111111"
+    },
+    "customer": "Матюшкін Кирило",
+    "total": 280,
+    "final_total": 280,
+    "stars_used": 0,
+    "items": [
+      {
+        "title": "Арома-свічка           🥥Coconut🌴",
+        "quantity": 1,
+        "price": 280,
+        "total": 280,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp2qwmau-jkj*\n\nUID: 7\n👤 ПІБ: Матюшкін Кирило\n💬 Telegram: @111111\n🏙 Місто: Дніпро\n🏤 Відділення: 67\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Арома-свічка           🥥Coconut🌴 — ₴280 × 1 = ₴280\n\n💰 *Разом:* ₴280\n\nPID: p_mp2qwmaw_zv2bx8t3",
+    "history": [
+      {
+        "ts": 1778597292,
+        "status": "нове",
+        "by": 7
+      }
+    ],
+    "history_saved_at": 1778597292,
+    "history_reason": "created",
+    "history_by": 7,
+    "active": true
+  },
+  "p_mp2rxs27_0ye07fk8": {
+    "id": "p_mp2rxs27_0ye07fk8",
+    "orderId": "Omp2rxs1v-1nt7",
+    "pendingId": "p_mp2rxs27_0ye07fk8",
+    "user_id": 6,
+    "status": "нове",
+    "created_at": 1778599026,
+    "summary": {
+      "raw": "🧾 *Замовлення #Omp2rxs1v-1nt7*\n\nUID: 6\n👤 ПІБ: Матюшкин Кирило\n💬 Telegram: @1111111\n🏙 Місто: Киев\n🏤 Відділення: 11\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴290\n\nPID: p_mp2rxs27_0ye07fk8",
+      "total": 350,
+      "final_total": 290,
+      "stars_used": 60,
+      "customer": "Матюшкин Кирило",
+      "city": "Киев",
+      "delivery": "Нова пошта",
+      "department": "11",
+      "payment": "Оплата накладений платіж (післяплата)",
+      "contactMethod": "telegram",
+      "phone": "",
+      "telegram": "@1111111"
+    },
+    "customer": "Матюшкин Кирило",
+    "total": 350,
+    "final_total": 290,
+    "stars_used": 60,
+    "items": [
+      {
+        "title": "Свічка            🍋Limoncello Creme",
+        "quantity": 1,
+        "price": 350,
+        "total": 350,
+        "isSet": false,
+        "isCertificate": false,
+        "certificateStars": 0,
+        "isCustomOrder": false,
+        "material": "",
+        "color": "",
+        "volume": "",
+        "aroma": "",
+        "notes": "",
+        "setItems": []
+      }
+    ],
+    "raw": "🧾 *Замовлення #Omp2rxs1v-1nt7*\n\nUID: 6\n👤 ПІБ: Матюшкин Кирило\n💬 Telegram: @1111111\n🏙 Місто: Киев\n🏤 Відділення: 11\n🚚 Пошта: Нова пошта\n💳 Тип оплати: Оплата накладений платіж (післяплата)\n\n🕯 *Товари:*\n1) Свічка            🍋Limoncello Creme — ₴350 × 1 = ₴350\n\n💰 *Разом:* ₴350\n⭐ Знижка зірками: 60 (сертифікат: 0, звичайні: 60) (−₴60)\n✅ До сплати: ₴290\n\nPID: p_mp2rxs27_0ye07fk8",
+    "history": [
+      {
+        "ts": 1778599026,
+        "status": "нове",
+        "by": 6
+      }
+    ],
+    "history_saved_at": 1778599026,
+    "history_reason": "created",
+    "history_by": 6,
+    "active": true
+  }
+}

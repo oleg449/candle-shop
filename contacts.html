@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Контакти - Art Light</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="contacts.css" />
+  <!-- Leaflet CSS for interactive map -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+
+<div id="categoryPanel" class="category-panel">
+  <button id="closeCategories" class="close-category">&times;</button>
+  
+  <!-- Authentication Section for Side Menu -->
+  <div id="sideMenuAuth" class="side-menu-auth">
+    <!-- Show when user is NOT logged in -->
+    <div id="guestSideSection" class="guest-side-section">
+      <h3>Акаунт</h3>
+      <div class="auth-links">
+        <a href="auth.html" class="auth-menu-link">🔑 Вхід</a>
+        <a href="auth.html?tab=register" class="auth-menu-link">📝 Реєстрація</a>
+      </div>
+
+    </div>
+    
+    <!-- Show when user IS logged in -->
+    <div id="userSideSection" class="user-side-section" style="display: none;">
+      <h3>Мій акаунт</h3>
+      <div class="user-info-side">
+        <p class="user-greeting-side"><span id="userNameSide">Користувач</span></p>
+        <p class="user-stars-side">⭐ <span id="userStarsSide">0</span> бонусних зірок</p>
+      </div>
+      <div class="auth-links">
+        <a href="profile.html" class="auth-menu-link">👤 Мій профіль</a>
+        <a href="admin.html" class="auth-menu-link">⚙️ Адмін-панель</a>
+        <a href="#" onclick="logoutUser()" class="auth-menu-link">🚪 Вийти</a>
+      </div>
+    </div>
+  </div>
+  
+  <h3>Категорії</h3>
+  <ul>
+    <!-- Категории будут добавлены динамически через updateCategoryPanel() -->
+  </ul>
+  
+  <h3>Додаткові опції</h3>
+  <ul>
+    <li><a href="about.html">Про нас</a></li>
+    <li><a href="info.html">Корисна інформація</a></li>
+    <li><a href="#homeMasterclasses">Майстер-класи</a></li>
+    <li><a href="#homeCertificates">Подарункові сертифікати</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</div>
+
+
+<header class="floating-header">
+  <div class="header-inner">
+    <!-- Mobile-only: three-bar text (no label) to open side panel -->
+    <a href="#" id="openMenuMobile" class="menu-link mobile-only" aria-label="Меню">☰</a>
+    <img src="logo.png" alt="Art Light" class="logo" />
+
+    <nav class="nav-links">
+     <button id="openMenu" class="menu-button icon-button ghost" aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+          <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+     </button>
+      <a href="about.html" class="about-link">Про нас</a>
+      <a href="contacts.html" class="contacts-link">Контакти</a>
+      
+      
+      
+      <div class="bonus-counter">
+        <span class="stars-icon">⭐</span>
+        <span id="bonusStars">0</span> зірок
+        <div class="bonus-tooltip">
+          <p>За кожну покупку ви отримуєте 10 зірок!</p>
+          <p>1 зірка = 1 грн знижки</p>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile stars pill with tooltip -->
+    <div class="mobile-stars mobile-only" aria-hidden="false">
+      <div class="mobile-stars-tooltip">
+        За кожну покупку ви отримуєте 10 зірок!<br>1 зірка = 1 грн знижки
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFD95A"/>
+            <stop offset="100%" stop-color="#F5C542"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#gStar)" d="M12 2l2.9 5.88 6.5.95-4.7 4.58 1.1 6.47L12 17.77 6.2 19.88l1.1-6.47-4.7-4.58 6.5-.95L12 2z"/>
+      </svg>
+      <span id="bonusStarsMobile">0</span>
+      <span class="stars-label">зірок</span>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Пошук..." />
+
+      <button type="button" id="headerSearchBtn" class="search-icon icon-button ghost" aria-label="Пошук">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+<!-- Mobile search drawer (hidden by default) -->
+<div id="mobileSearch" class="mobile-search" aria-hidden="true">
+  <div class="mobile-search-inner">
+    <button type="button" class="mobile-search-close" aria-label="Закрити">×</button>
+    <input type="text" id="mobileSearchInput" placeholder="Пошук..." autocomplete="off" />
+    <button type="button" class="mobile-search-go" aria-label="Пошук">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#b9825a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-search-chips" aria-label="Швидкий пошук"></div>
+  <div class="mobile-search-sort" aria-label="Сортування/фільтр за категоріями"></div>
+  <div class="mobile-search-suggestion" id="mobileSearchHint" aria-hidden="true">Введіть запит для пошуку товарів</div>
+  
+  
+</div>
+<div id="searchBackdrop" class="search-backdrop" aria-hidden="true"></div>
+
+<div id="cartIcon" class="icon-button accent cart-icon" onclick="openCart()" aria-label="Відкрити кошик">
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+    <path d="M6 6h15l-1.5 8h-11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="20" r="1.2" />
+    <circle cx="17" cy="20" r="1.2" />
+  </svg>
+  <span id="cartCount">0</span>
+</div>
+
+<main class="contacts-main">
+  <div class="contacts-hero">
+    <div class="hero-content">
+      <h1>Контакти</h1>
+      <p class="hero-subtitle">Ми завжди готові допомогти вам</p>
+    </div>
+  </div>
+
+  <div class="contacts-container">
+    <section class="contact-info">
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="#d4a574" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <h3>Email</h3>
+          <p><a href="mailto:info@artlight.ua">info@artlight.ua</a></p>
+          <p class="contact-description">Напишіть нам будь-коли, відповімо протягом 24 годин</p>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="#d4a574" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <h3>Телефон</h3>
+          <p><a href="tel:+380671234567">+38 (097) 292-61-97</a></p>
+          <p class="contact-description">Дзвоніть з 9:00 до 18:00, Пн-Пт</p>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="#d4a574" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+          </div>
+          <h3>Режим роботи</h3>
+          <p>Пн-Пт: 09:00 - 18:00<br>Сб: 10:00 - 16:00<br>Нд: вихідний</p>
+          <p class="contact-description">Попередньо домовляйтеся про візит</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-form-section">
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Напишіть нам</h2>
+          <p>Маєте питання або пропозицію? Ми з радістю вас вислухаємо!</p>
+        </div>
+
+        <!-- To enable real email sending without your own backend, this form is configured for Formspree. -->
+        <!-- 1) Create a free form at https://formspree.io (you'll get an ID like f/abcdwxyz) -->
+        <!-- 2) Replace YOUR_FORM_ID below with your actual ID. -->
+        <form class="contact-form" id="contactForm" action="https://formspree.io/f/mkgzkvye" method="POST" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Ім'я *</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Телефон</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Тема повідомлення *</label>
+            <select id="subject" name="subject" required>
+              <option value="">Оберіть тему</option>
+              <option value="order">Замовлення</option>
+              <option value="question">Загальне питання</option>
+              <option value="custom">Індивідуальне замовлення</option>
+              <option value="wholesale">Оптові закупівлі</option>
+              <option value="partnership">Співпраця</option>
+              <option value="complaint">Скарга</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Повідомлення *</label>
+            <textarea id="message" name="message" rows="5" required placeholder="Розкажіть детальніше про ваше питання..."></textarea>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="privacy" name="privacy" required>
+              <span class="checkmark"></span>
+              <span class="checkbox-text">Я погоджуюся з <a href="#" class="privacy-link">політикою конфіденційності</a></span>
+            </label>
+          </div>
+
+          <!-- Status messages -->
+          <div id="formStatus" class="form-status" aria-live="polite" style="display:none;"></div>
+
+          <button type="submit" class="submit-btn">
+            <span>Надіслати повідомлення</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    
+    
+
+    <section class="faq-section">
+      <h2>Часті питання</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>Як довго горять ваші свічки?</h3>
+          <p>Час горіння залежить від розміру свічки. Наші стандартні свічки горять від 25 до 40 годин.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Чи можна замовити свічку за індивідуальним дизайном?</h3>
+          <p>Так! Ми створюємо унікальні свічки за вашими побаженнями. Зв'яжіться з нами для обговорення деталей.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Які способи доставки ви пропонуєте?</h3>
+          <p>Ми доставляємо по всій Україні через Нову Пошту.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Чи є гарантія на продукцію?</h3>
+          <p>Ми гарантуємо якість наших свічок. У разі виявлення дефектів, ми замінимо товар або повернемо кошти.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <img src="logo.png" alt="Art Light" class="footer-logo" />
+      <p>Створюємо атмосферу затишку та гармонії</p>
+    </div>
+    
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="#">Свічки</a></li>
+        <li><a href="about.html">Про нас</a></li>
+        <li><a href="contacts.html">Контакти</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <p>📧 info@artlight.ua</p>
+      <p>📞 +38 (097) 292-61-97</p>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <p>&copy; 2025 Art Light. Всі права захищені.</p>
+  </div>
+</footer>
+
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin="">
+</script>
+
+<script>
+  (function() {
+    const form = document.getElementById('contactForm');
+    const statusBox = document.getElementById('formStatus');
+
+    function showStatus(message, type) {
+      if (!statusBox) return;
+      statusBox.textContent = message;
+      statusBox.style.display = 'block';
+      statusBox.className = 'form-status ' + (type === 'error' ? 'error' : 'success');
+    }
+
+    function clearStatus() {
+      if (!statusBox) return;
+      statusBox.textContent = '';
+      statusBox.style.display = 'none';
+      statusBox.className = 'form-status';
+    }
+
+    if (form) {
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        clearStatus();
+
+        // Basic required checks (in addition to HTML5 validation)
+        if (!form.checkValidity()) {
+          showStatus('Будь ласка, заповніть усі обов\'язкові поля.', 'error');
+          return;
+        }
+        if (!document.getElementById('privacy').checked) {
+          showStatus('Потрібна згода з політикою конфіденційності.', 'error');
+          return;
+        }
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+        if (submitBtn) submitBtn.disabled = true, submitBtn.innerHTML = '<span>Надсилання...</span>';
+
+        try {
+          const endpoint = form.getAttribute('action');
+          if (!endpoint || endpoint.includes('YOUR_FORM_ID')) {
+            throw new Error('Form endpoint is not configured. Please replace YOUR_FORM_ID with your Formspree ID.');
+          }
+
+          const formData = new FormData(form);
+          // Optional: set a subject for email if supported by backend
+          // For Formspree, any field named _subject can be used as the email subject
+          if (!formData.get('_subject')) {
+            const readableSubject = 'Art Light: ' + (formData.get('subject') || 'Повідомлення з форми');
+            formData.append('_subject', readableSubject);
+          }
+
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Accept': 'application/json' },
+            body: formData
+          });
+
+          if (response.ok) {
+            showStatus('Дякуємо! Ваше повідомлення надіслано. Ми зв\'яжемося з вами найближчим часом.', 'success');
+            form.reset();
+          } else {
+            const data = await response.json().catch(() => ({}));
+            const msg = (data && data.errors && data.errors.length)
+              ? data.errors.map(e => e.message).join(', ')
+              : 'Сталася помилка при відправці. Спробуйте пізніше або напишіть нам на info@artlight.ua';
+            showStatus(msg, 'error');
+          }
+        } catch (err) {
+          showStatus(err.message || 'Сталася непередбачена помилка. Спробуйте пізніше.', 'error');
+        } finally {
+          if (submitBtn) submitBtn.disabled = false, submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+  })();
+</script>
+
+<script>
+  // Ініціалізація інтерактивної карти Leaflet (OpenStreetMap)
+  (function() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    // Координати Києва поблизу центру. За потреби можете замінити на точні для вашої адреси
+    const coords = [50.4501, 30.5234];
+    const map = L.map('map', { scrollWheelZoom: false }).setView(coords, 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const marker = L.marker(coords).addTo(map);
+    marker.bindPopup('<b>Art Light</b><br>вул. Свічкова, 12, Київ').openPopup();
+  })();
+</script>
+
+<!-- Shared site scripts for header/menu/auth and interactions -->
+<script src="auth-integration.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

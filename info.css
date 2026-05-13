@@ -1,0 +1,94 @@
+/* Info page styles aligned with site theme */
+
+/* Theme tokens (synced with style.css) */
+:root {
+  --brand: #8b5e3c;
+  --brand-strong: #a46c48;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+}
+
+/* Main container */
+.info-section {
+  max-width: 1100px;
+  margin: 170px auto 40px; /* extra space under floating header */
+  padding: 0 20px 20px;
+}
+
+.info-section h1 {
+  font-family: 'Playfair Display', serif;
+  color: var(--brand);
+}
+
+/* Article card */
+.info-article {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin: 0 auto 24px;
+  box-shadow: var(--shadow);
+}
+
+.info-article h2 {
+  color: var(--brand);
+  margin: 0 0 14px 0;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  border-bottom: 1px solid #e0d0c0;
+  padding-bottom: 6px;
+}
+
+.info-article p {
+  line-height: 1.7;
+  color: #374151;
+  margin: 0 0 12px 0;
+}
+
+.info-article ul,
+.info-article ol {
+  padding-left: 22px;
+  margin: 0 0 14px 0;
+}
+
+.info-article li {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+.info-article ul li::marker { color: var(--brand); }
+.info-article ol li::marker { color: var(--brand); font-weight: 700; }
+
+/* Footer layout enhancements (works with .footer from style.css) */
+.footer .footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  text-align: left;
+}
+
+.footer .footer-section h3 {
+  color: var(--brand);
+  margin-bottom: 8px;
+}
+
+.footer .social-links { display: flex; gap: 10px; flex-wrap: wrap; }
+.footer .social-icon { color: var(--brand); text-decoration: none; }
+
+/* Category panel spacing on this page */
+/* Responsive */
+@media (max-width: 768px) {
+  .info-section { margin-top: 140px; padding: 0 16px 16px; }
+  .info-article { padding: 20px; }
+}
+
+/* === Site-wide visual consistency with the main page === */
+.info-article {
+  border: 1px solid rgba(242, 140, 61, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 18px 45px rgba(42, 24, 18, 0.08);
+}

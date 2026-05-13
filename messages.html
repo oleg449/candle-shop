@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Чати і повідомлення - Art Light</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chat.css">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: #FCF5EB;
+      color: #4A3628;
+      font-family: "Open Sans", Arial, sans-serif;
+    }
+
+    @keyframes messengerAppear {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes sidebarItemIn {
+      from {
+        opacity: 0;
+        transform: translateX(-12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes bubbleIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .messenger-shell {
+      width: min(1240px, calc(100% - 36px));
+      min-height: calc(100vh - 48px);
+      margin: 190px auto 24px;
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr);
+      background: #FFFFFF;
+      border: 1px solid #E0D7C6;
+      border-radius: 22px;
+      box-shadow: 0 22px 55px rgba(74, 54, 40, 0.09);
+      overflow: hidden;
+      animation: messengerAppear 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .messenger-sidebar {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #FFF8EF;
+      border-right: 1px solid #E0D7C6;
+    }
+
+    .messenger-brand {
+      padding: 24px 22px 18px;
+      border-bottom: 1px solid rgba(224, 215, 198, 0.8);
+    }
+
+    .messenger-brand h1 {
+      margin: 0;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: 0;
+      color: #4A3628;
+    }
+
+    .messenger-brand p {
+      margin: 10px 0 0;
+      color: rgba(74, 54, 40, 0.68);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .messenger-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 16px;
+      border-bottom: 1px solid rgba(224, 215, 198, 0.8);
+    }
+
+    .messenger-tab {
+      min-height: 42px;
+      border: 1px solid rgba(74, 54, 40, 0.18);
+      border-radius: 999px;
+      background: transparent;
+      color: #4A3628;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 220ms ease, border-color 220ms ease, color 220ms ease, transform 180ms ease, box-shadow 220ms ease;
+    }
+
+    .messenger-tab.active {
+      background: #F2994A;
+      border-color: #F2994A;
+      color: #FFFFFF;
+      box-shadow: 0 12px 24px rgba(242, 153, 74, 0.24);
+    }
+
+    .messenger-tab:hover {
+      transform: translateY(-1px);
+      border-color: rgba(242, 153, 74, 0.48);
+    }
+
+    .messenger-list {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .chat-list,
+    .notice-list {
+      display: none;
+      gap: 10px;
+    }
+
+    .chat-list.active,
+    .notice-list.active {
+      display: grid;
+    }
+
+    .chat-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid rgba(224, 215, 198, 0.9);
+      border-radius: 16px;
+      background: #FFFFFF;
+      color: #4A3628;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(74, 54, 40, 0.05);
+      animation: sidebarItemIn 260ms ease both;
+      transition: background-color 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 180ms ease;
+    }
+
+    .chat-item.active {
+      background: rgba(242, 153, 74, 0.12);
+      border-color: rgba(242, 153, 74, 0.42);
+      box-shadow: inset 4px 0 0 #F2994A, 0 12px 26px rgba(74, 54, 40, 0.06);
+    }
+
+    .chat-item:hover {
+      transform: translateX(3px);
+      border-color: rgba(242, 153, 74, 0.4);
+      box-shadow: inset 4px 0 0 rgba(242, 153, 74, 0.46), 0 14px 30px rgba(74, 54, 40, 0.08);
+    }
+
+    .chat-avatar {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #F2994A;
+      color: #FFFFFF !important;
+      font-weight: 800;
+      line-height: 1;
+      overflow: hidden;
+      margin: 0 !important;
+      font-size: 18px !important;
+      text-align: center;
+      transition: transform 200ms ease, box-shadow 220ms ease;
+    }
+
+    .chat-item > .chat-avatar,
+    .dialog-title > .chat-avatar {
+      display: grid !important;
+      place-items: center !important;
+      color: #FFFFFF !important;
+      margin: 0 !important;
+    }
+
+    .chat-avatar-img {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      display: block;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #F2994A;
+      border: 1px solid rgba(224, 215, 198, 0.9);
+    }
+
+    .chat-item strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .chat-item span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(74, 54, 40, 0.66);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .chat-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-time {
+      color: rgba(74, 54, 40, 0.5);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .notice-empty {
+      padding: 18px;
+      border: 1px dashed rgba(74, 54, 40, 0.24);
+      border-radius: 16px;
+      color: rgba(74, 54, 40, 0.68);
+      line-height: 1.5;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .notice-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid rgba(224, 215, 198, 0.9);
+      border-radius: 16px;
+      background: #FFFFFF;
+      box-shadow: 0 10px 25px rgba(74, 54, 40, 0.05);
+      animation: sidebarItemIn 260ms ease both;
+      transition: transform 180ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .notice-item:hover {
+      transform: translateX(3px);
+      border-color: rgba(242, 153, 74, 0.42);
+      box-shadow: 0 14px 30px rgba(74, 54, 40, 0.08);
+    }
+
+    .notice-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(242, 153, 74, 0.14);
+      color: #F2994A;
+      font-weight: 800;
+    }
+
+    .notice-order_status .notice-icon {
+      background: rgba(59, 130, 246, 0.12);
+      color: #2563EB;
+    }
+
+    .notice-stars_added .notice-icon,
+    .notice-bonus_added .notice-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: #D97706;
+    }
+
+    .notice-order_created .notice-icon {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+    }
+
+    .notice-item strong {
+      display: block;
+      color: #4A3628;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .notice-item p {
+      margin: 5px 0 0;
+      color: rgba(74, 54, 40, 0.68);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .notice-item time {
+      display: block;
+      margin-top: 8px;
+      color: rgba(74, 54, 40, 0.48);
+      font-size: 12px;
+    }
+
+    .notice-tools {
+      display: flex;
+      justify-content: center;
+      padding: 0 0 10px;
+    }
+
+    .clear-notices-btn {
+      min-height: 38px;
+      padding: 8px 14px;
+      border: 1px solid rgba(74, 54, 40, 0.28);
+      border-radius: 999px;
+      background: transparent;
+      color: #4A3628;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 220ms ease, background-color 220ms ease;
+    }
+
+    .clear-notices-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(242, 153, 74, 0.52);
+      background: rgba(242, 153, 74, 0.08);
+    }
+
+    .messenger-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background: #FFFFFF;
+    }
+
+    .dialog-topbar {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      border-bottom: 1px solid #E0D7C6;
+      background: #FFFFFF;
+    }
+
+    .dialog-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .dialog-title h2 {
+      margin: 0;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 28px;
+      letter-spacing: 0;
+      color: #4A3628;
+    }
+
+    .dialog-title p {
+      margin: 3px 0 0;
+      color: rgba(74, 54, 40, 0.62);
+      font-size: 13px;
+    }
+
+    .dialog-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .dialog-link {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: transform 180ms ease, box-shadow 220ms ease, background-color 220ms ease, border-color 220ms ease;
+    }
+
+    .dialog-link.primary {
+      background: #F2994A;
+      color: #FFFFFF;
+      box-shadow: 0 14px 28px rgba(242, 153, 74, 0.26);
+    }
+
+    .dialog-link.secondary {
+      color: #4A3628;
+      border: 1px solid rgba(74, 54, 40, 0.28);
+      background: transparent;
+    }
+
+    .dialog-link:hover {
+      transform: translateY(-2px);
+    }
+
+    .dialog-link.secondary:hover {
+      border-color: rgba(242, 153, 74, 0.52);
+      background: rgba(242, 153, 74, 0.08);
+    }
+
+    .account-chat-container.chat-container {
+      position: relative !important;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+      background: #FFFFFF;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .account-chat-container .chat-header {
+      display: none;
+    }
+
+    .account-chat-container .chat-messages {
+      flex: 1;
+      min-height: 420px;
+      height: auto;
+      padding: 22px;
+      background: #FFF9F1;
+      scroll-behavior: smooth;
+    }
+
+    .account-chat-container .chat-input {
+      gap: 12px;
+      background: #FFFFFF;
+      padding: 16px 18px;
+      border-top: 1px solid #E0D7C6;
+    }
+
+    .account-chat-container #messageInput {
+      border: 1px solid #E0D7C6;
+      border-radius: 16px;
+      background: #FFF9F1;
+      color: #4A3628;
+      min-height: 52px;
+      padding: 14px 16px;
+      font: inherit;
+      resize: vertical;
+      transition: border-color 220ms ease, box-shadow 220ms ease, background-color 220ms ease;
+    }
+
+    .account-chat-container #messageInput:focus {
+      outline: none;
+      border-color: rgba(242, 153, 74, 0.78);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(242, 153, 74, 0.12);
+    }
+
+    .account-chat-container #sendMessage {
+      min-width: 130px;
+      border: 0;
+      border-radius: 999px;
+      background: #F2994A;
+      color: #FFFFFF;
+      padding: 0 22px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(242, 153, 74, 0.24);
+      transition: transform 180ms ease, box-shadow 220ms ease, filter 220ms ease;
+    }
+
+    .account-chat-container #sendMessage:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(242, 153, 74, 0.32);
+      filter: saturate(1.06);
+    }
+
+    .account-chat-container #sendMessage:active,
+    .dialog-link:active,
+    .messenger-tab:active,
+    .chat-item:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .account-chat-container .message.user {
+      background: #F2994A;
+      color: #FFFFFF;
+      animation: bubbleIn 220ms ease both;
+    }
+
+    .account-chat-container .message.admin {
+      background: #FFFFFF;
+      color: #4A3628;
+      border: 1px solid #E0D7C6;
+      animation: bubbleIn 220ms ease both;
+    }
+
+    .empty-dialog {
+      margin: auto;
+      max-width: 420px;
+      padding: 24px;
+      text-align: center;
+      color: rgba(74, 54, 40, 0.66);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 900px) {
+      .messenger-shell {
+        grid-template-columns: 1fr;
+        width: min(100% - 24px, 1240px);
+        margin-top: 150px;
+        min-height: auto;
+      }
+
+      .messenger-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid #E0D7C6;
+      }
+
+      .messenger-list {
+        max-height: 260px;
+      }
+
+      .dialog-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .account-chat-container .chat-input {
+        flex-direction: column;
+      }
+
+      .account-chat-container #sendMessage {
+        min-height: 46px;
+      }
+    }
+  </style>
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+<div id="categoryPanel" class="category-panel">
+  <button id="closeCategories" class="close-category">&times;</button>
+  
+  <!-- Authentication Section for Side Menu -->
+  <div id="sideMenuAuth" class="side-menu-auth">
+    <!-- Show when user is NOT logged in -->
+    <div id="guestSideSection" class="guest-side-section">
+      <h3>Акаунт</h3>
+      <div class="auth-links">
+        <a href="auth.html" class="auth-menu-link">🔑 Вхід</a>
+        <a href="auth.html?tab=register" class="auth-menu-link">📝 Реєстрація</a>
+      </div>
+
+    </div>
+    
+    <!-- Show when user IS logged in -->
+    <div id="userSideSection" class="user-side-section" style="display: none;">
+      <h3>Мій акаунт</h3>
+      <div class="user-info-side">
+        <p class="user-greeting-side"><span id="userNameSide">Користувач</span></p>
+        <p class="user-stars-side">⭐ <span id="userStarsSide">0</span> бонусних зірок</p>
+      </div>
+      <div class="auth-links">
+        <a href="profile.html" class="auth-menu-link">👤 Мій профіль</a>
+        <a href="admin.html" class="auth-menu-link">⚙️ Адмін-панель</a>
+        <a href="#" onclick="logoutUser()" class="auth-menu-link">🚪 Вийти</a>
+      </div>
+    </div>
+  </div>
+  
+  <h3>Категорії</h3>
+  <ul>
+    <!-- Категории будут добавлены динамически через updateCategoryPanel() -->
+  </ul>
+  
+  <h3>Додаткові опції</h3>
+  <ul>
+    <li><a href="about.html">Про нас</a></li>
+    <li><a href="info.html">Корисна інформація</a></li>
+    <li><a href="#homeMasterclasses">Майстер-класи</a></li>
+    <li><a href="#homeCertificates">Подарункові сертифікати</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</div>
+
+
+<header class="floating-header">
+  <div class="header-inner">
+    <!-- Mobile-only: three-bar text (no label) to open side panel -->
+    <a href="#" id="openMenuMobile" class="menu-link mobile-only" aria-label="Меню">☰</a>
+    <img src="logo.png" alt="Art Light" class="logo" />
+
+    <nav class="nav-links">
+     <button id="openMenu" class="menu-button icon-button ghost" aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+          <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+     </button>
+      <a href="about.html" class="about-link">Про нас</a>
+      <a href="contacts.html" class="contacts-link">Контакти</a>
+      
+      
+      
+      <div class="bonus-counter">
+        <span class="stars-icon">⭐</span>
+        <span id="bonusStars">0</span> зірок
+        <div class="bonus-tooltip">
+          <p>За кожну покупку ви отримуєте 10 зірок!</p>
+          <p>1 зірка = 1 грн знижки</p>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile stars pill with tooltip -->
+    <div class="mobile-stars mobile-only" aria-hidden="false">
+      <div class="mobile-stars-tooltip">
+        За кожну покупку ви отримуєте 10 зірок!<br>1 зірка = 1 грн знижки
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFD95A"/>
+            <stop offset="100%" stop-color="#F5C542"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#gStar)" d="M12 2l2.9 5.88 6.5.95-4.7 4.58 1.1 6.47L12 17.77 6.2 19.88l1.1-6.47-4.7-4.58 6.5-.95L12 2z"/>
+      </svg>
+      <span id="bonusStarsMobile">0</span>
+      <span class="stars-label">зірок</span>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Пошук..." />
+
+      <button type="button" id="headerSearchBtn" class="search-icon icon-button ghost" aria-label="Пошук">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+<!-- Mobile search drawer (hidden by default) -->
+<div id="mobileSearch" class="mobile-search" aria-hidden="true">
+  <div class="mobile-search-inner">
+    <button type="button" class="mobile-search-close" aria-label="Закрити">×</button>
+    <input type="text" id="mobileSearchInput" placeholder="Пошук..." autocomplete="off" />
+    <button type="button" class="mobile-search-go" aria-label="Пошук">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#b9825a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-search-chips" aria-label="Швидкий пошук"></div>
+  <div class="mobile-search-sort" aria-label="Сортування/фільтр за категоріями"></div>
+  <div class="mobile-search-suggestion" id="mobileSearchHint" aria-hidden="true">Введіть запит для пошуку товарів</div>
+  
+  
+</div>
+<div id="searchBackdrop" class="search-backdrop" aria-hidden="true"></div>
+
+<div id="cartIcon" class="icon-button accent cart-icon" onclick="openCart()" aria-label="Відкрити кошик">
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+    <path d="M6 6h15l-1.5 8h-11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="20" r="1.2" />
+    <circle cx="17" cy="20" r="1.2" />
+  </svg>
+  <span id="cartCount">0</span>
+</div>
+
+<main class="messenger-shell">
+    <aside class="messenger-sidebar">
+      <section class="messenger-brand">
+        <h1>Чати і повідомлення</h1>
+        <p>Ваш центр спілкування з Art Light.</p>
+      </section>
+
+      <nav class="messenger-tabs" aria-label="Розділи повідомлень">
+        <button class="messenger-tab active" type="button" data-panel="chats">Чати</button>
+        <button class="messenger-tab" type="button" data-panel="notifications">Уведомлення</button>
+      </nav>
+
+      <section class="messenger-list">
+        <div id="chatsPanel" class="chat-list active">
+          <button id="supportChatItem" class="chat-item active" type="button">
+            <img class="chat-avatar-img" src="images/avatar.png" alt="Art Light">
+            <span>
+              <strong>Служба підтримки Art Light</strong>
+              <span>Питання щодо замовлень, оплат і товарів</span>
+            </span>
+          </button>
+        </div>
+
+        <div id="notificationsPanel" class="notice-list">
+          <div class="notice-tools">
+            <button id="clearNotificationsBtn" class="clear-notices-btn" type="button">Очистити повідомлення</button>
+          </div>
+          <div class="notice-empty">
+            Завантаження уведомлень...
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="messenger-main" aria-label="Служба підтримки Art Light">
+      <header class="dialog-topbar">
+        <div class="dialog-title">
+          <span id="dialogAvatar" class="chat-avatar">AL</span>
+          <div>
+            <h2 id="dialogTitle">Служба підтримки Art Light</h2>
+            <p id="dialogSubtitle">Зазвичай відповідаємо після перегляду запиту адміністратором.</p>
+          </div>
+        </div>
+        <div class="dialog-actions">
+          <a class="dialog-link secondary" href="profile.html">Мій профіль</a>
+          <a class="dialog-link primary" href="index.html">До магазину</a>
+        </div>
+      </header>
+
+      <div class="chat-container open account-chat-container">
+        <div class="chat-header">
+          <h2>Служба підтримки Art Light</h2>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+          <textarea id="messageInput" placeholder="Напишіть повідомлення службі підтримки..."></textarea>
+          <button id="sendMessage" type="button">Надіслати</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth-integration.js"></script>
+  <script src="shared-header.js"></script>
+  <script src="messages.js"></script>
+</body>
+</html>

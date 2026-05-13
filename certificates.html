@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Подарункові сертифікати - Art Light</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="chat.css" />
+  <link rel="stylesheet" href="certificates.css" />
+  <style>
+    /* Inline header/auth styles from index to keep visuals consistent */
+    .auth-section { display: flex; align-items: center; margin-left: 20px; }
+    .guest-section { display: flex; gap: 15px; }
+    .auth-link { color: #b9825a; text-decoration: none; font-weight: 600; padding: 8px 16px; border-radius: 20px; transition: all 0.3s ease; }
+    .auth-link:hover { background: rgba(185, 130, 90, 0.1); transform: translateY(-1px); }
+    .auth-link.register { background: linear-gradient(135deg, #d4a574, #c19660); color: white; }
+    .auth-link.register:hover { background: linear-gradient(135deg, #c19660, #b8855c); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3); }
+    .user-section { position: relative; }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-greeting { color: #b9825a; font-weight: 600; }
+    .user-dropdown { position: relative; }
+    .user-menu-btn { background: none; border: none; color: #b9825a; cursor: pointer; font-size: 12px; padding: 4px 8px; border-radius: 4px; transition: background 0.3s ease; }
+    .user-menu-btn:hover { background: rgba(185, 130, 90, 0.1); }
+    .user-menu { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 150px; z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; }
+    .user-dropdown:hover .user-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .user-menu a { display: block; padding: 12px 16px; color: #333; text-decoration: none; transition: background 0.3s ease; }
+    .user-menu a:hover { background: #f5f5f5; }
+    .user-menu a:first-child { border-radius: 8px 8px 0 0; }
+    .user-menu a:last-child { border-radius: 0 0 8px 8px; }
+    .side-menu-auth { border-bottom: 2px solid #f0f0f0; margin-bottom: 20px; padding-bottom: 20px; }
+    .side-menu-auth h3 { color: #d4a574; margin-bottom: 15px; font-size: 18px; }
+    .side-menu-auth a { color: #333; text-decoration: none; padding: 10px 15px; display: block; border-radius: 8px; transition: all 0.3s ease; font-weight: 500; }
+    .side-menu-auth a:hover { background: rgba(212, 165, 116, 0.1); color: #d4a574; transform: translateX(5px); }
+    .user-info-side { background: linear-gradient(135deg, #d4a574, #c19660); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    .user-greeting-side { margin: 0 0 5px 0; font-weight: 600; }
+    .user-stars-side { margin: 0; font-size: 14px; opacity: 0.9; }
+  </style>
+  <link rel="stylesheet" href="site-unify.css" />
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+  <!-- Category Panel (like on index.html) -->
+  <div id="categoryPanel" class="category-panel">
+    <button id="closeCategories" class="close-category">&times;</button>
+    
+    <div id="sideMenuAuth" class="side-menu-auth">
+      <div id="guestSideSection" class="guest-side-section">
+        <h3>Акаунт</h3>
+        <div class="auth-links">
+          <a href="auth.html" class="auth-menu-link">🔑 Вхід</a>
+          <a href="auth.html?tab=register" class="auth-menu-link">📝 Реєстрація</a>
+        </div>
+      </div>
+      <div id="userSideSection" class="user-side-section" style="display: none;">
+        <h3>Мій акаунт</h3>
+        <div class="user-info-side">
+          <p class="user-greeting-side"><span id="userNameSide">Користувач</span></p>
+          <p class="user-stars-side">⭐ <span id="userStarsSide">0</span> бонусних зірок</p>
+        </div>
+        <div class="auth-links">
+          <a href="profile.html" class="auth-menu-link">👤 Мій профіль</a>
+          <a href="#" onclick="logoutUser()" class="auth-menu-link">🚪 Вийти</a>
+        </div>
+      </div>
+    </div>
+    
+    <h3>Категорії</h3>
+    <ul>
+      <!-- Will be filled by updateCategoryPanel() -->
+    </ul>
+    
+    <h3>Додаткові опції</h3>
+    <ul>
+      <li><a href="index.html">Головна</a></li>
+      <li><a href="about.html">Про нас</a></li>
+      <li><a href="contacts.html">Контакти</a></li>
+      <li><a href="info.html">Корисна інформація</a></li>
+      <li><a href="masterclass.html">Майстер-класи</a></li>
+      <li><a href="certificates.html">Подарункові сертифікати</a></li>
+    </ul>
+  </div>
+
+  <header class="floating-header">
+    <div class="header-inner">
+      <!-- Mobile-only: three-bar text (no label) to open side panel -->
+      <a href="#" id="openMenuMobile" class="menu-link mobile-only" aria-label="Меню">☰</a>
+      <img src="logo.png" alt="Art Light" class="logo" />
+
+      <nav class="nav-links">
+       <button id="openMenu" class="menu-button" aria-label="Меню">
+          <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="menu-text">Меню</span>
+       </button>
+        <a href="about.html" class="about-link">Про нас</a>
+        <a href="contacts.html" class="contacts-link">Контакти</a>
+        
+        <div class="bonus-counter">
+          <span class="stars-icon">⭐</span>
+          <span id="bonusStars">0</span> зірок
+          <div class="bonus-tooltip">
+            <p>За кожну покупку ви отримуєте 10 зірок!</p>
+            <p>1 зірка = 1 грн знижки</p>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Mobile stars pill with tooltip -->
+      <div class="mobile-stars mobile-only" aria-hidden="false">
+        <div class="mobile-stars-tooltip">
+          За кожну покупку ви отримуєте 10 зірок!<br>1 зірка = 1 грн знижки
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFD95A"/>
+              <stop offset="100%" stop-color="#F5C542"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#gStar)" d="M12 2l2.9 5.88 6.5.95-4.7 4.58 1.1 6.47L12 17.77 6.2 19.88l1.1-6.47-4.7-4.58 6.5-.95L12 2z"/>
+        </svg>
+        <span id="bonusStarsMobile">0</span>
+        <span class="stars-label">зірок</span>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Пошук..." />
+
+        <button type="button" id="headerSearchBtn" class="search-icon" aria-label="Пошук">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#b9825a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile search drawer (hidden by default) -->
+  <div id="mobileSearch" class="mobile-search" aria-hidden="true">
+    <div class="mobile-search-inner">
+      <button type="button" class="mobile-search-close" aria-label="Закрити">×</button>
+      <input type="text" id="mobileSearchInput" placeholder="Пошук..." autocomplete="off" />
+      <button type="button" class="mobile-search-go" aria-label="Пошук">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#b9825a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-search-chips" aria-label="Швидкий пошук"></div>
+    <div class="mobile-search-sort" aria-label="Сортування/фільтр за категоріями"></div>
+    <div class="mobile-search-suggestion" id="mobileSearchHint" aria-hidden="true">Введіть запит для пошуку товарів</div>
+    
+    
+  </div>
+  <div id="searchBackdrop" class="search-backdrop" aria-hidden="true"></div>
+
+  <div id="cartIcon" onclick="openCart()">
+    🛒 <span id="cartCount">0</span>
+  </div>
+
+  <main class="certificates-section">
+    <h1 class="section-title">Подарункові сертифікати ⭐</h1>
+    <p style="text-align: center; max-width: 800px; margin: 0 auto 40px; font-size: 1.1rem; line-height: 1.6; color: #34495e;">
+      Подарунковий сертифікат від Art Light — електронний та активується у профілі акаунту. Номінали вказані у зірках, які можна використовувати для знижок.
+    </p>
+    
+    <div class="certificate-grid">
+      <!-- Сертифікат 250 зірок -->
+      <div class="certificate-card">
+        <img src="images/250.png" alt="Подарунковий сертифікат 250 зірок" class="certificate-image" onerror="this.onerror=null; this.src='250.png';">
+        <div class="certificate-info">
+          <h2 class="certificate-title">Сертифікат</h2>
+          <div class="certificate-price">250 ⭐</div>
+          <p class="certificate-description">Електронний сертифікат. Активується у профілі. Підійде для знайомства з нашою продукцією.</p>
+          <ul class="certificate-features">
+            <li>Діє 6 місяців</li>
+            <li>Лише електронний формат</li>
+            <li>Активація у профілі акаунту</li>
+          </ul>
+          <button class="btn-buy-certificate" onclick="openPurchaseForm('Сертифікат 250 ⭐', 250)">Купити</button>
+        </div>
+      </div>
+      
+      <!-- Сертифікат 500 зірок -->
+      <div class="certificate-card popular">
+        <div style="background: #f1c40f; color: #2c3e50; text-align: center; padding: 5px 0; font-weight: bold;">Популярний вибір</div>
+        <img src="images/500.png" alt="Подарунковий сертифікат 500 зірок" class="certificate-image" onerror="this.onerror=null; this.src='500.png';">
+        <div class="certificate-info">
+          <h2 class="certificate-title">Сертифікат</h2>
+          <div class="certificate-price">500 ⭐</div>
+          <p class="certificate-description">Електронний сертифікат. Активується у профілі. Добрий вибір для подарунка.</p>
+          <ul class="certificate-features">
+            <li>Діє 9 місяців</li>
+            <li>Лише електронний формат</li>
+            <li>Активація у профілі акаунту</li>
+          </ul>
+          <button class="btn-buy-certificate" style="background: #e67e22; color: white;" onclick="openPurchaseForm('Сертифікат 500 ⭐', 500)">Купити</button>
+        </div>
+      </div>
+      
+      <!-- Сертифікат 1000 зірок -->
+      <div class="certificate-card">
+        <img src="images/1000.png" alt="Подарунковий сертифікат 1000 зірок" class="certificate-image" onerror="this.onerror=null; this.src='1000.png';">
+        <div class="certificate-info">
+          <h2 class="certificate-title">Сертифікат</h2>
+          <div class="certificate-price">1000 ⭐</div>
+          <p class="certificate-description">Електронний сертифікат. Активується у профілі. Для щедрих подарунків.</p>
+          <ul class="certificate-features">
+            <li>Діє 1 рік</li>
+            <li>Лише електронний формат</li>
+            <li>Активація у профілі акаунту</li>
+          </ul>
+          <button class="btn-buy-certificate" onclick="openPurchaseForm('Сертифікат 1000 ⭐', 1000)">Купити</button>
+        </div>
+      </div>
+    </div>
+    
+    <div style="max-width: 800px; margin: 60px auto 0; background: #f9f9f9; padding: 30px; border-radius: 10px; border-left: 4px solid #f1c40f;">
+      <h2 style="color: #2c3e50; margin-top: 0;">Як це працює?</h2>
+      <ol style="padding-left: 20px; color: #34495e; line-height: 1.8;">
+        <li>Оберіть номінал сертифіката та натисніть "Купити"</li>
+        <li>Заповніть форму замовлення з вашими контактами</li>
+        <li>Оплатіть замовлення зручним способом</li>
+        <li>Отримайте унікальний промокод (електронний сертифікат)</li>
+        <li>Активуйте промокод у розділі профілю та використовуйте зірки як знижку</li>
+      </ol>
+      <p style="margin-top: 20px; font-style: italic; color: #7f8c8d;">
+        * Сертифікат — лише електронний. Активація у профілі акаунту.
+      </p>
+    </div>
+  </main>
+
+  <!-- Форма покупки (уніфікований стиль як на сайті) -->
+  <div id="purchaseModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h3>Оформлення замовлення сертифіката</h3>
+      <div id="certificateSummary" style="margin-bottom:10px; color:#5e3f28; font-weight:600;"></div>
+      <form id="purchaseForm">
+        <input type="text" id="certSurname" name="surname" placeholder="Прізвище" required />
+        <input type="text" id="certName" name="name" placeholder="Ваше ім’я" required />
+
+        <div class="contact-method">
+          <h4>Як зручно зв’язатися?</h4>
+          <div class="contact-toggle">
+            <input type="radio" id="certContactPhone" name="contactMethod" value="phone" checked>
+            <label for="certContactPhone" class="contact-option">Телефон</label>
+
+            <input type="radio" id="certContactTelegram" name="contactMethod" value="telegram">
+            <label for="certContactTelegram" class="contact-option">Telegram</label>
+          </div>
+        </div>
+
+        <div id="certPhoneField">
+          <input type="text" id="certPhone" name="phone" placeholder="Номер телефону" maxlength="10" pattern="\d{10}" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" />
+        </div>
+        <div id="certTgField" style="display:none;">
+          <input type="text" id="certTelegram" name="telegram" placeholder="Telegram юзернейм (@username)" />
+        </div>
+
+        <input type="text" id="certCity" name="address" placeholder="Місто" required />
+        <button type="submit" class="btn-buy-certificate" style="width: 100%; padding: 12px;">Оформити замовлення</button>
+      </form>
+      <div id="promoResult" style="display:none; margin-top:15px; background:#f9f9f9; border:1px solid #eee; border-radius:8px; padding:12px;">
+        <div style="font-weight:700; color:#2c3e50; margin-bottom:6px;">Ваш промокод:</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <code id="issuedCode" style="font-size:1.1rem; color:#8b5e3c; user-select:all;">—</code>
+          <button id="copyCodeBtn" class="btn-buy-certificate" style="padding:6px 10px;">Скопіювати</button>
+        </div>
+        <div style="margin-top:8px; font-size:0.9rem; color:#34495e;">Активуйте промокод у <a href="profile.html">профілі</a>, щоб отримати зірки.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Контакти</h3>
+        <p>Email: info@artlight.com</p>
+        <p>Телефон: +38 (097) 292-61-97</p>
+      </div>
+      <div class="footer-section">
+        <h3>Графік роботи</h3>
+        <p>Пн-Пт: 9:00 - 18:00</p>
+        <p>Сб-Нд: 10:00 - 16:00</p>
+      </div>
+      <div class="footer-section">
+        <h3>Соціальні мережі</h3>
+        <div class="social-links">
+          <a href="#" class="social-icon">Facebook</a>
+          <a href="#" class="social-icon">Instagram</a>
+          <a href="#" class="social-icon">Telegram</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2023 Art Light. Всі права захищені.</p>
+    </div>
+  </footer>
+
+  <script src="auth-integration.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // Side menu behavior and init identical to index
+    (function(){
+      const panel = document.getElementById('categoryPanel');
+      const openBtn = document.getElementById('openMenu');
+      const closeBtn = document.getElementById('closeCategories');
+      if (openBtn && panel) {
+        openBtn.addEventListener('click', function() {
+          panel.classList.add('open');
+          document.body.classList.add('category-open');
+        });
+      }
+      if (closeBtn && panel) {
+        closeBtn.addEventListener('click', function() {
+          panel.classList.remove('open');
+          document.body.classList.remove('category-open');
+        });
+      }
+      document.addEventListener('DOMContentLoaded', function(){
+        try { if (typeof updateAuthUI === 'function') updateAuthUI(); } catch(e){}
+        try { if (typeof updateCategoryPanel === 'function') updateCategoryPanel(); } catch(e){}
+      });
+    })();
+    // Модальное окно покупки сертифікату
+    const modal = document.getElementById('purchaseModal');
+    const closeModal = document.querySelector('.close-modal');
+    let selectedCert = { name: '', stars: 0 };
+    
+    // Перемикач способу зв'язку (тільки для сторінки сертифікатів)
+    function refreshContactFields(){
+      const phoneRadio = document.getElementById('certContactPhone');
+      const tgRadio = document.getElementById('certContactTelegram');
+      const phoneWrap = document.getElementById('certPhoneField');
+      const tgWrap = document.getElementById('certTgField');
+      const phoneInput = document.getElementById('certPhone');
+      const tgInput = document.getElementById('certTelegram');
+      const method = (tgRadio && tgRadio.checked) ? 'telegram' : 'phone';
+      if (method === 'telegram'){
+        if (tgWrap) tgWrap.style.display = '';
+        if (phoneWrap) phoneWrap.style.display = 'none';
+        if (tgInput) tgInput.required = true;
+        if (phoneInput) phoneInput.required = false;
+      } else {
+        if (tgWrap) tgWrap.style.display = 'none';
+        if (phoneWrap) phoneWrap.style.display = '';
+        if (phoneInput) phoneInput.required = true;
+        if (tgInput) tgInput.required = false;
+      }
+    }
+    
+    function openPurchaseForm(certificateName, price) {
+      selectedCert = { name: certificateName, stars: Number(price)||0 };
+      const sum = document.getElementById('certificateSummary');
+      if (sum) sum.textContent = `${certificateName} — ${selectedCert.stars} ⭐`;
+      modal.style.display = 'block';
+      // Ensure correct contact fields shown when opening
+      if (typeof refreshContactFields === 'function') refreshContactFields();
+    }
+    
+    closeModal.onclick = function() {
+      modal.style.display = 'none';
+    }
+    
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+    
+    // Генерація промокоду
+    function generatePromoCode() {
+      function chunk(s){ return s.match(/.{1,4}/g).join('-'); }
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let raw = '';
+      for (let i=0;i<12;i++){ raw += chars.charAt(Math.floor(Math.random()*chars.length)); }
+      return chunk(raw);
+    }
+
+    // Збереження промокодів у localStorage
+    function saveCertCode(entry){
+      const key = 'certCodes';
+      const list = JSON.parse(localStorage.getItem(key)||'[]');
+      list.push(entry);
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+
+    // Обробка форми
+    document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = this;
+      const name = form.name.value.trim();
+      const email = '';
+      const phone = form.phone ? form.phone.value.trim() : '';
+      const telegram = form.telegram ? form.telegram.value.trim() : '';
+      const contactMethod = (document.getElementById('certContactTelegram')?.checked) ? 'telegram' : 'phone';
+      const contact = contactMethod === 'telegram' ? telegram : phone;
+      if (!selectedCert.stars) { alert('Помилка: не обрано сертифікат.'); return; }
+
+      // Створюємо pending та замовлення на сайті. Адміни побачать його в панелі.
+      let pendingId = '';
+      try {
+        const resp = await makeAuthenticatedRequest(`${API_BASE_URL}/pending`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'certificate', payload: { stars: selectedCert.stars, title: selectedCert.name } })
+        });
+        if (resp.ok) {
+          const d = await resp.json();
+          pendingId = d.id || '';
+        }
+      } catch(_) {}
+
+      try {
+        const orderId = `cert_${Date.now().toString(36)}`;
+        const title = selectedCert.name || `Сертифікат ${selectedCert.stars} ⭐`;
+        const raw = [
+          `Замовлення сертифіката #${orderId}`,
+          `Ім'я: ${name}`,
+          contactMethod === 'telegram' ? `Telegram: ${contact}` : `Телефон: ${contact}`,
+          `Номінал: ${selectedCert.stars} ⭐`,
+          pendingId ? `PID: ${pendingId}` : ''
+        ].filter(Boolean).join('\n');
+        await makeAuthenticatedRequest(`${API_BASE_URL}/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId,
+            pendingId,
+            status: 'нове',
+            customer: name,
+            total: Number(selectedCert.stars) || 0,
+            final_total: Number(selectedCert.stars) || 0,
+            items: [{
+              title,
+              price: Number(selectedCert.stars) || 0,
+              quantity: 1,
+              isCertificate: true,
+              certificateStars: Number(selectedCert.stars) || 0
+            }],
+            raw,
+            summary: {
+              raw,
+              total: Number(selectedCert.stars) || 0,
+              final_total: Number(selectedCert.stars) || 0,
+              customer: name,
+              contactMethod,
+              phone: contactMethod === 'phone' ? contact : '',
+              telegram: contactMethod === 'telegram' ? contact : ''
+            }
+          })
+        });
+      } catch (err) {
+        console.error('Certificate order save failed:', err);
+        alert('Не вдалося зберегти замовлення сертифіката. Спробуйте ще раз.');
+        return;
+      }
+      alert('Дякуємо за замовлення сертифіката! Після підтвердження на сайті з’явиться повідомлення з вашим промокодом.');
+
+      form.reset();
+      // Повернути поля зв'язку у стан за замовчуванням
+      const defaultRadio = document.getElementById('certContactPhone');
+      if (defaultRadio) defaultRadio.checked = true;
+      refreshContactFields();
+    });
+    
+    // Ініціалізація обробників перемикачів способу зв'язку в модальному вікні
+    const certPhoneRadio = document.getElementById('certContactPhone');
+    const certTgRadio = document.getElementById('certContactTelegram');
+    if (certPhoneRadio) certPhoneRadio.addEventListener('change', refreshContactFields);
+    if (certTgRadio) certTgRadio.addEventListener('change', refreshContactFields);
+    // Первинне встановлення правильних полів (на випадок, якщо модал відкрито за замовчуванням)
+    refreshContactFields();
+    
+  </script>
+</body>
+</html>

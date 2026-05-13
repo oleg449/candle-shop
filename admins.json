@@ -1,0 +1,20 @@
+[
+  {
+    "id": "site-6",
+    "site_user_id": 6,
+    "name": "super",
+    "email": "",
+    "permissions": [
+      "products",
+      "masterclasses",
+      "users",
+      "reviews",
+      "orders",
+      "revenue",
+      "admins"
+    ],
+    "source": "promo",
+    "created_at": 1777907626,
+    "role": "super_admin"
+  }
+]

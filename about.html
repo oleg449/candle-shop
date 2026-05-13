@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Про нас - Art Light</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="about.css" />
+  <script src="site-notifications.js"></script>
+</head>
+<body class="about-page">
+
+<div id="categoryPanel" class="category-panel">
+  <button id="closeCategories" class="close-category">&times;</button>
+  
+  <!-- Authentication Section for Side Menu -->
+  <div id="sideMenuAuth" class="side-menu-auth">
+    <!-- Show when user is NOT logged in -->
+    <div id="guestSideSection" class="guest-side-section">
+      <h3>Акаунт</h3>
+      <div class="auth-links">
+        <a href="auth.html" class="auth-menu-link">🔑 Вхід</a>
+        <a href="auth.html?tab=register" class="auth-menu-link">📝 Реєстрація</a>
+      </div>
+
+    </div>
+    
+    <!-- Show when user IS logged in -->
+    <div id="userSideSection" class="user-side-section" style="display: none;">
+      <h3>Мій акаунт</h3>
+      <div class="user-info-side">
+        <p class="user-greeting-side"><span id="userNameSide">Користувач</span></p>
+        <p class="user-stars-side">⭐ <span id="userStarsSide">0</span> бонусних зірок</p>
+      </div>
+      <div class="auth-links">
+        <a href="profile.html" class="auth-menu-link">👤 Мій профіль</a>
+        <a href="admin.html" class="auth-menu-link">⚙️ Адмін-панель</a>
+        <a href="#" onclick="logoutUser()" class="auth-menu-link">🚪 Вийти</a>
+      </div>
+    </div>
+  </div>
+  
+  <h3>Категорії</h3>
+  <ul>
+    <!-- Категории будут добавлены динамически через updateCategoryPanel() -->
+  </ul>
+  
+  <h3>Додаткові опції</h3>
+  <ul>
+    <li><a href="about.html">Про нас</a></li>
+    <li><a href="info.html">Корисна інформація</a></li>
+    <li><a href="#homeMasterclasses">Майстер-класи</a></li>
+    <li><a href="#homeCertificates">Подарункові сертифікати</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</div>
+
+
+<header class="floating-header">
+  <div class="header-inner">
+    <!-- Mobile-only: three-bar text (no label) to open side panel -->
+    <a href="#" id="openMenuMobile" class="menu-link mobile-only" aria-label="Меню">☰</a>
+    <img src="logo.png" alt="Art Light" class="logo" />
+
+    <nav class="nav-links">
+     <button id="openMenu" class="menu-button icon-button ghost" aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+          <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+     </button>
+      <a href="about.html" class="about-link">Про нас</a>
+      <a href="contacts.html" class="contacts-link">Контакти</a>
+      
+      
+      
+      <div class="bonus-counter">
+        <span class="stars-icon">⭐</span>
+        <span id="bonusStars">0</span> зірок
+        <div class="bonus-tooltip">
+          <p>За кожну покупку ви отримуєте 10 зірок!</p>
+          <p>1 зірка = 1 грн знижки</p>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile stars pill with tooltip -->
+    <div class="mobile-stars mobile-only" aria-hidden="false">
+      <div class="mobile-stars-tooltip">
+        За кожну покупку ви отримуєте 10 зірок!<br>1 зірка = 1 грн знижки
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFD95A"/>
+            <stop offset="100%" stop-color="#F5C542"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#gStar)" d="M12 2l2.9 5.88 6.5.95-4.7 4.58 1.1 6.47L12 17.77 6.2 19.88l1.1-6.47-4.7-4.58 6.5-.95L12 2z"/>
+      </svg>
+      <span id="bonusStarsMobile">0</span>
+      <span class="stars-label">зірок</span>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Пошук..." />
+
+      <button type="button" id="headerSearchBtn" class="search-icon icon-button ghost" aria-label="Пошук">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+<!-- Mobile search drawer (hidden by default) -->
+<div id="mobileSearch" class="mobile-search" aria-hidden="true">
+  <div class="mobile-search-inner">
+    <button type="button" class="mobile-search-close" aria-label="Закрити">×</button>
+    <input type="text" id="mobileSearchInput" placeholder="Пошук..." autocomplete="off" />
+    <button type="button" class="mobile-search-go" aria-label="Пошук">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#b9825a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-search-chips" aria-label="Швидкий пошук"></div>
+  <div class="mobile-search-sort" aria-label="Сортування/фільтр за категоріями"></div>
+  <div class="mobile-search-suggestion" id="mobileSearchHint" aria-hidden="true">Введіть запит для пошуку товарів</div>
+  
+  
+</div>
+<div id="searchBackdrop" class="search-backdrop" aria-hidden="true"></div>
+
+<div id="cartIcon" class="icon-button accent cart-icon" onclick="openCart()" aria-label="Відкрити кошик">
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+    <path d="M6 6h15l-1.5 8h-11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="20" r="1.2" />
+    <circle cx="17" cy="20" r="1.2" />
+  </svg>
+  <span id="cartCount">0</span>
+</div>
+
+<main class="about-main">
+  <div class="about-hero">
+    <div class="hero-content">
+      <h1>Про нас</h1>
+      <p class="hero-subtitle">Створюємо атмосферу затишку та гармонії</p>
+    </div>
+  </div>
+
+  <div class="about-container">
+    <section class="about-story">
+      <div class="story-content">
+        <div class="story-text">
+          <h2>Наша історія</h2>
+          <p>Art Light народився з любові до краси та прагнення створювати особливу атмосферу в кожному домі. Ми віримо, що свічка - це не просто джерело світла, а спосіб передати емоції, створити настрій та зробити кожну мить особливою.</p>
+          
+          <p>Наша команда складається з талановитих майстрів, які вкладають душу в кожну свічку. Ми використовуємо тільки натуральні матеріали найвищої якості: соєвий віск, бавовняні гноти та ексклюзивні ароматичні композиції.</p>
+        </div>
+        <div class="story-image">
+          <img src="images/candle-making.jpg" alt="Виготовлення свічок" />
+        </div>
+      </div>
+    </section>
+
+    <section class="about-values">
+      <h2>Наші цінності</h2>
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">🕯️</div>
+          <h3>Якість</h3>
+          <p>Використовуємо тільки натуральні матеріали та перевірені технології виготовлення</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🎨</div>
+          <h3>Унікальність</h3>
+          <p>Кожна свічка - це витвір мистецтва з неповторним дизайном та ароматом</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🌿</div>
+          <h3>Екологічність</h3>
+          <p>Піклуємося про довкілля, використовуючи екологічно чисті матеріали</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">💝</div>
+          <h3>Турбота</h3>
+          <p>Кожна свічка створена з любов'ю та увагою до найменших деталей</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-mission">
+      <div class="mission-content">
+        <h2>Наша місія</h2>
+        <p>Ми прагнемо зробити ваш дім затишнішим, а життя - яскравішим. Наші свічки допомагають створити особливу атмосферу для романтичних вечорів, релаксації після важкого дня або святкових моментів з близькими.</p>
+        
+        <div class="mission-stats">
+          <div class="stat">
+            <span class="stat-number">1000+</span>
+            <span class="stat-label">Задоволених клієнтів</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Унікальних ароматів</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">3</span>
+            <span class="stat-label">Роки досвіду</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="about-cta">
+      <div class="cta-content">
+        <h2>Готові створити особливу атмосферу?</h2>
+        <p>Оберіть свічку, яка підкреслить ваш настрій та зробить ваш дім ще затишнішим</p>
+        <div class="cta-buttons">
+          <a href="index.html" class="cta-button primary">Переглянути каталог</a>
+          <a href="contacts.html" class="cta-button secondary">Зв'язатися з нами</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <img src="logo.png" alt="Art Light" class="footer-logo" />
+      <p>Створюємо атмосферу затишку та гармонії</p>
+    </div>
+    
+    <div class="footer-section">
+      <h3>Навігація</h3>
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="#">Свічки</a></li>
+        <li><a href="about.html">Про нас</a></li>
+        <li><a href="contacts.html">Контакти</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h3>Контакти</h3>
+      <p>📧 info@artlight.ua</p>
+      <p>📞 +38 (097) 292-61-97</p>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <p>&copy; 2025 Art Light. Всі права захищені.</p>
+  </div>
+</footer>
+
+  <script src="auth-integration.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "Свічка 🍋Limoncello Creme": [],
+  "Ы": [],
+  "Свічка     🍷✨Гранатовий сидр✨": [
+    {
+      "user": "Super ananas",
+      "rating": 5,
+      "comment": "у3у33",
+      "date": "2026-05-07T05:15:50.255Z",
+      "adminReply": "",
+      "published": true
+    },
+    {
+      "user": "Super ananas",
+      "rating": 5,
+      "comment": "уыцу",
+      "date": "2026-05-07T10:29:04.536Z",
+      "published": false,
+      "adminReply": ""
+    },
+    {
+      "user": "Матюшкін Кирило",
+      "rating": 5,
+      "comment": "ццц",
+      "date": "2026-05-07T10:29:13.886Z",
+      "published": false,
+      "adminReply": ""
+    },
+    {
+      "user": "Матюшкін Кирило",
+      "rating": 5,
+      "comment": "ццццц",
+      "date": "2026-05-07T10:29:17.252Z",
+      "published": false,
+      "adminReply": ""
+    }
+  ],
+  "Свічка            🍋Limoncello Creme": [
+    {
+      "user": "Super ananas",
+      "rating": 5,
+      "comment": "вввв",
+      "date": "2026-05-07T05:16:15.008Z",
+      "adminReply": "",
+      "published": true
+    }
+  ]
+}

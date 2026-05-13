@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вхід та Реєстрація - Свічки</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        window.API_BASE_URL = window.API_BASE_URL || (
+            window.location.port === '8000' ? 'http://localhost:3000/api' : '/api'
+        );
+    </script>
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            color: #d4a574;
+            border-bottom: 3px solid #d4a574;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #d4a574;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4a574, #c19660);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 165, 116, 0.3);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fdf2f2;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f2fdf2;
+            border-radius: 5px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #d4a574;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #d4a574;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .divider span {
+            font-size: 14px;
+            color: #666;
+            margin: 0 10px;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 15px;
+            background: white;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .google-btn svg {
+            margin-right: 10px;
+        }
+
+        .google-btn:hover {
+            background: #f7f7f7;
+        }
+
+        /* Center GIS buttons */
+        .gsi-wrap {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .gsi-wrap > div {
+            margin: 0 auto !important;
+            width: auto !important;
+        }
+
+        /* Match the main page craft style */
+        .auth-container {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(242, 140, 61, 0.14);
+            border-radius: 32px;
+            box-shadow: 0 18px 45px rgba(42, 24, 18, 0.08);
+        }
+
+        .auth-tabs {
+            border-bottom-color: rgba(242, 140, 61, 0.16);
+        }
+
+        .auth-tab {
+            color: #6a4b3c;
+            border-radius: 999px 999px 0 0;
+        }
+
+        .auth-tab.active {
+            color: #f28c3d;
+            border-bottom-color: #f28c3d;
+        }
+
+        .form-group label {
+            color: #2e1e17;
+        }
+
+        .form-group input {
+            background: #fffaf5;
+            border-color: rgba(106, 75, 60, 0.18);
+            border-radius: 14px;
+        }
+
+        .form-group input:focus {
+            border-color: #f28c3d;
+            box-shadow: 0 0 0 4px rgba(242, 140, 61, 0.12);
+        }
+
+        .auth-btn {
+            background: #f28c3d;
+            border-radius: 999px;
+            box-shadow: 0 14px 26px rgba(242, 140, 61, 0.35);
+        }
+
+        .auth-btn:hover {
+            background: #cc6c20;
+        }
+
+        .google-btn {
+            border-color: rgba(106, 75, 60, 0.22);
+            border-radius: 999px;
+            color: #6a4b3c;
+        }
+    </style>
+    <link rel="stylesheet" href="site-unify.css">
+    <style>
+        body {
+            min-height: 100vh;
+            justify-content: center;
+            padding: 32px 16px;
+            box-sizing: border-box;
+        }
+
+        body > .auth-container {
+            width: min(100%, 520px) !important;
+            max-width: 520px !important;
+            margin: 0 auto !important;
+            padding: 34px 38px !important;
+            box-sizing: border-box !important;
+            border-radius: 24px !important;
+        }
+
+        body > .auth-container .auth-tabs {
+            margin-bottom: 26px;
+        }
+
+        body > .auth-container .form-group {
+            margin-bottom: 18px;
+        }
+
+        body > .auth-container .form-group input {
+            min-height: 48px;
+        }
+
+        body > .auth-container .auth-btn,
+        body > .auth-container .google-btn {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        body > .auth-container .gsi-wrap {
+            overflow: hidden;
+        }
+
+        body > .auth-container .gsi-wrap iframe {
+            max-width: 100% !important;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                justify-content: flex-start;
+                padding: 18px 12px;
+            }
+
+            body > .auth-container {
+                padding: 24px 18px !important;
+                border-radius: 18px !important;
+            }
+
+            body > .auth-container .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchAuthTab('login')">Вхід</button>
+            <button class="auth-tab" onclick="switchAuthTab('register')">Реєстрація</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+            <div class="form-group">
+                <label for="loginUsername">Логін або Email:</label>
+                <input type="text" id="loginUsername" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Пароль:</label>
+                <input type="password" id="loginPassword" name="password" required>
+            </div>
+            <button type="submit" class="auth-btn" id="loginBtn">Увійти</button>
+            
+            <div id="loginMessage"></div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Ім'я:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Прізвище:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="registerUsername">Логін:</label>
+                <input type="text" id="registerUsername" name="username" required minlength="3">
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">Email:</label>
+                <input type="email" id="registerEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Пароль:</label>
+                <input type="password" id="registerPassword" name="password" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Підтвердіть пароль:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон (необов'язково):</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+                <label for="address">Адреса (необов'язково):</label>
+                <input type="text" id="address" name="address">
+            </div>
+            <button type="submit" class="auth-btn" id="registerBtn">Зареєструватися</button>
+            
+            <div id="registerMessage"></div>
+        </form>
+
+        <div class="back-link">
+            <a href="index.html">← Повернутися до магазину</a>
+        </div>
+    </div>
+
+    <script>
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.querySelector('.auth-tab:first-child');
+            const registerTab = document.querySelector('.auth-tab:last-child');
+
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+            } else if (tab === 'register') {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'register') {
+            switchAuthTab('register');
+        }
+    </script>
+    <script src="auth.js"></script>
+</body>
+</html>

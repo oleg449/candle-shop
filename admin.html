@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Адмін-панель - Art Light</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+  <section id="adminGate" class="admin-gate" hidden>
+    <form id="adminGateForm" class="admin-gate-card">
+      <p class="eyebrow">Art Light</p>
+      <h1>Доступ до адмін-панелі</h1>
+      <p>Ваш акаунт ще не має прав адміністратора. Введіть промокод, щоб активувати доступ.</p>
+      <label class="field">
+        <span>Промокод адміністратора</span>
+        <input id="adminGateCode" type="text" autocomplete="one-time-code" placeholder="ADMIN..." required>
+      </label>
+      <div class="form-actions">
+        <button class="primary-btn" type="submit">Активувати доступ</button>
+        <a class="ghost-btn" href="index.html">До магазину</a>
+      </div>
+      <div id="adminGateMessage" class="admin-gate-message"></div>
+    </form>
+  </section>
+
+  <main class="admin-shell">
+    <aside class="admin-sidebar">
+      <a class="back-link" href="index.html">← До магазину</a>
+      <h1>Адмін-панель</h1>
+      <nav class="admin-nav" aria-label="Розділи адмін-панелі">
+        <button class="admin-tab active" data-section="info">Інформація</button>
+        <button class="admin-tab" data-section="products">Товари</button>
+        <button class="admin-tab" data-section="masterclasses">Майстер-класи</button>
+        <button class="admin-tab" data-section="certificates">Сертифікати</button>
+        <button class="admin-tab" data-section="orders">Замовлення</button>
+        <button class="admin-tab" data-section="users">Користувачі</button>
+        <button class="admin-tab" data-section="reviews">Відгуки</button>
+        <button class="admin-tab" data-section="admins">Адміністратори</button>
+      </nav>
+    </aside>
+
+    <section class="admin-content">
+      <header class="admin-topbar">
+        <div>
+          <p class="eyebrow">Art Light</p>
+          <h2 id="sectionTitle">Інформація</h2>
+        </div>
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="ghost-btn" type="button">Оновити</button>
+          <span id="adminStatus" class="status-text"></span>
+        </div>
+      </header>
+
+      <section id="infoSection" class="admin-section active">
+        <div id="statsGrid" class="stats-grid"></div>
+        <div class="panel">
+          <h3>Швидкий стан</h3>
+          <div id="infoDetails" class="info-details"></div>
+        </div>
+      </section>
+
+      <section id="entitySection" class="admin-section">
+        <div class="entity-layout">
+          <div class="panel list-panel">
+            <div class="panel-head">
+              <h3 id="entityListTitle">Список</h3>
+              <button id="newItemBtn" class="primary-btn" type="button">Додати</button>
+            </div>
+            <input id="entitySearch" class="search-input" type="search" placeholder="Пошук">
+            <div id="entityList" class="entity-list"></div>
+          </div>
+
+          <form id="entityForm" class="panel editor-panel">
+            <div class="panel-head">
+              <h3 id="editorTitle">Редактор</h3>
+              <button id="deleteItemBtn" class="danger-btn" type="button">Видалити</button>
+            </div>
+            <div id="fieldEditor" class="field-grid"></div>
+            <div id="imageUploadBox" class="upload-box" style="display:none;">
+              <input id="imageFileInput" type="file" accept="image/*" multiple hidden>
+              <input id="replaceImageInput" type="file" accept="image/*" hidden>
+              <div class="upload-copy">
+                <strong>Завантажити фото</strong>
+                <span>Перетягніть зображення сюди або виберіть файл</span>
+              </div>
+              <button id="chooseImageBtn" class="ghost-btn" type="button">Виберіть файл</button>
+            </div>
+            <div id="imageGallery" class="image-gallery" style="display:none;"></div>
+            <details class="advanced-json">
+              <summary>Розширені JSON дані</summary>
+              <label class="field full">
+                <span>JSON дані</span>
+                <textarea id="jsonEditor" spellcheck="false"></textarea>
+              </label>
+            </details>
+            <div class="form-actions">
+              <button class="primary-btn" type="submit">Зберегти</button>
+              <button id="resetEditorBtn" class="ghost-btn" type="button">Скинути</button>
+            </div>
+          </form>
+        </div>
+        <div id="adminPromoPanel" class="panel admin-promo-panel" style="display:none;">
+          <div class="panel-head">
+            <h3>Промокоди адміністраторів</h3>
+            <button id="createAdminPromoBtn" class="primary-btn" type="button">Створити промокод</button>
+          </div>
+          <p class="muted">Людина активує цей код у профілі, і її акаунт отримає доступ до адмін-панелі.</p>
+          <div id="adminPromoList" class="entity-list"></div>
+        </div>
+      </section>
+
+      <section id="ordersSection" class="admin-section">
+        <div class="entity-layout orders-layout">
+          <div class="panel list-panel orders-panel">
+            <div class="orders-head">
+              <div>
+                <h3>Замовлення</h3>
+                <p id="ordersListMeta" class="orders-meta">Активні замовлення</p>
+              </div>
+              <span id="ordersUrgentBadge" class="orders-urgent-badge" hidden>0</span>
+            </div>
+            <div class="orders-toolbar">
+              <div class="orders-mode" aria-label="Режим перегляду замовлень">
+                <button id="activeOrdersTab" class="orders-mode-btn active" type="button">Активні</button>
+                <button id="orderHistoryTab" class="orders-mode-btn" type="button">Історія</button>
+              </div>
+              <div class="orders-actions">
+                <button id="deleteAllOrdersBtn" class="danger-btn" type="button">Видалити всі</button>
+                <button id="clearOrderHistoryBtn" class="danger-btn" type="button">Очистити історію</button>
+              </div>
+            </div>
+            <div class="orders-filters">
+              <input id="orderSearch" class="search-input" type="search" placeholder="Пошук за номером або клієнтом">
+              <select id="orderStatusFilter" class="search-input" aria-label="Фільтр за статусом">
+                <option value="">Усі статуси</option>
+                <option value="нове">Нове</option>
+                <option value="оплачено">Оплачено</option>
+                <option value="виготовляється">Виготовляється</option>
+                <option value="відправлено">Відправлено</option>
+                <option value="виконано">Виконано</option>
+                <option value="скасовано">Скасовано</option>
+              </select>
+              <select id="orderKindFilter" class="search-input" aria-label="Фільтр за типом">
+                <option value="">Усі типи</option>
+                <option value="digital">Цифрові</option>
+                <option value="physical">Фізичні</option>
+                <option value="urgent">Очікують оплату</option>
+              </select>
+            </div>
+            <div id="ordersList" class="entity-list"></div>
+          </div>
+          <div class="panel editor-panel">
+            <h3>Деталі замовлення</h3>
+            <div id="orderDetails" class="order-details muted">Оберіть замовлення</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="usersSection" class="admin-section">
+        <div class="entity-layout users-layout">
+          <div class="panel list-panel users-panel">
+            <div class="users-head">
+              <div>
+                <h3>Користувачі</h3>
+                <p id="usersListMeta" class="orders-meta">CRM база</p>
+              </div>
+            </div>
+            <input id="userSearch" class="search-input" type="search" placeholder="Пошук за іменем, email або Telegram">
+            <div id="usersList" class="entity-list"></div>
+          </div>
+          <form id="userForm" class="panel editor-panel user-editor-panel">
+            <div class="panel-head">
+              <h3 id="userEditorTitle">Картка користувача</h3>
+              <button id="deleteUserBtn" class="danger-btn" type="button">Видалити</button>
+            </div>
+            <div id="userDetails" class="user-details muted">Оберіть користувача</div>
+          </form>
+        </div>
+      </section>
+
+      <section id="reviewsSection" class="admin-section">
+        <div class="entity-layout reviews-layout">
+          <div class="panel list-panel reviews-panel">
+            <div class="reviews-admin-head">
+              <div>
+                <h3>Відгуки</h3>
+                <p id="reviewsListMeta" class="orders-meta">Усі відгуки</p>
+              </div>
+            </div>
+            <div class="review-filters" aria-label="Фільтр відгуків">
+              <button class="review-filter-btn active" data-review-filter="all" type="button">Всі</button>
+              <button class="review-filter-btn" data-review-filter="new" type="button">Нові</button>
+              <button class="review-filter-btn" data-review-filter="published" type="button">Опубліковані</button>
+            </div>
+            <div id="reviewsList" class="reviews-admin-list"></div>
+          </div>
+          <form id="reviewAdminForm" class="panel editor-panel review-editor-panel">
+            <div class="review-editor-head">
+              <h3 id="reviewEditorTitle">Додати відгук</h3>
+              <button id="newReviewBtn" class="ghost-btn" type="button">Новий</button>
+            </div>
+            <label class="field">
+              <span>Товар або майстер-клас</span>
+              <select id="reviewProductSelect" required></select>
+            </label>
+            <label class="field">
+              <span>Імʼя клієнта</span>
+              <input id="reviewUserInput" type="text" placeholder="Користувач" required>
+            </label>
+            <div class="field">
+              <span>Рейтинг</span>
+              <div id="reviewRatingStars" class="review-rating-stars" role="radiogroup" aria-label="Рейтинг відгуку"></div>
+            </div>
+            <label class="field">
+              <span>Текст відгуку</span>
+              <textarea id="reviewCommentInput" rows="5" placeholder="Враження клієнта..." required></textarea>
+            </label>
+            <label class="field">
+              <span>Відповідь адміністратора</span>
+              <textarea id="reviewReplyInput" rows="4" placeholder="Дякуємо за відгук!"></textarea>
+            </label>
+            <div class="review-editor-actions">
+              <button class="primary-btn" type="submit">Зберегти</button>
+              <button id="toggleReviewPublishBtn" class="ghost-btn" type="button">Опублікувати</button>
+              <button id="deleteSelectedReviewBtn" class="danger-btn" type="button">Видалити</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="certificatesSection" class="admin-section">
+        <div class="entity-layout">
+          <form id="certificateForm" class="panel list-panel">
+            <h3>Новий сертифікат</h3>
+            <label class="field">
+              <span>Код</span>
+              <div class="cert-code-row">
+                <input id="certCode" type="text" placeholder="ARTLIGHT2026">
+                <button id="generateCertCodeBtn" class="ghost-btn" type="button">Генерувати</button>
+              </div>
+            </label>
+            <label class="field">
+              <span>Зірки</span>
+              <input id="certStars" type="number" min="1" value="10">
+            </label>
+            <label class="field">
+              <span>Термін дії</span>
+              <input id="certExpiresAt" type="date">
+            </label>
+            <label class="field">
+              <span>Назва</span>
+              <input id="certTitle" type="text" placeholder="Подарунковий сертифікат">
+            </label>
+            <button class="primary-btn" type="submit">Створити</button>
+          </form>
+          <div class="panel editor-panel certificates-panel">
+            <div class="certificates-head">
+              <h3>Сертифікати</h3>
+              <input id="certificateSearch" class="search-input" type="search" placeholder="Пошук за кодом">
+            </div>
+            <div id="certificatesList" class="entity-list"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

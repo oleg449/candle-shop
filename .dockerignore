@@ -1,0 +1,10 @@
+node_modules
+.env
+users.db
+*.log
+preview
+previews
+.venv
+chromedriver.exe
+*.lnk
+Start_*.bat

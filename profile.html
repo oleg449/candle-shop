@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль користувача - Свічки</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --profile-text: #2e1e17;
+            --profile-muted: #756357;
+            --profile-border: rgba(106, 75, 60, 0.14);
+            --profile-card: rgba(255, 255, 255, 0.88);
+            --profile-soft: #fff8f1;
+            --profile-orange: #f28c3d;
+            --profile-orange-dark: #d97824;
+            --profile-danger: #9e4a3f;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #fff6ec;
+            color: var(--profile-text);
+        }
+
+        .profile-shell {
+            width: min(1360px, calc(100vw - 48px));
+            margin: 190px auto 42px;
+        }
+
+        .profile-page-head {
+            margin-bottom: 22px;
+        }
+
+        .profile-page-head h1 {
+            margin: 0;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(32px, 4vw, 54px);
+            color: var(--profile-text);
+            line-height: 1.05;
+        }
+
+        .profile-page-head p {
+            max-width: 680px;
+            margin: 10px 0 0;
+            color: var(--profile-muted);
+            font-size: 16px;
+            line-height: 1.55;
+        }
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 30%) minmax(0, 70%);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .profile-sidebar,
+        .profile-main {
+            display: grid;
+            gap: 18px;
+        }
+
+        .profile-card,
+        .edit-form {
+            background: var(--profile-card);
+            border: 1px solid var(--profile-border);
+            border-radius: 16px;
+            box-shadow: 0 16px 38px rgba(74, 54, 40, 0.07);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .profile-card:hover,
+        .edit-form:hover {
+            transform: translateY(-2px);
+            border-color: rgba(242, 140, 61, 0.26);
+            box-shadow: 0 22px 48px rgba(74, 54, 40, 0.1);
+        }
+
+        .profile-identity-card {
+            padding: 28px;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+            font-size: 44px;
+            font-weight: 900;
+            line-height: 1;
+            box-shadow: 0 16px 36px rgba(74, 54, 40, 0.16);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .profile-name {
+            margin: 0;
+            color: var(--profile-text);
+            font-size: 24px;
+            line-height: 1.2;
+        }
+
+        .profile-email {
+            margin: 8px 0 0;
+            color: var(--profile-muted);
+            overflow-wrap: anywhere;
+        }
+
+        .admin-status-badge {
+            display: none;
+            width: fit-content;
+            margin: 16px auto 0;
+            padding: 9px 13px;
+            border-radius: 999px;
+            background: rgba(242, 140, 61, 0.12);
+            color: #6a4b3c;
+            border: 1px solid rgba(242, 140, 61, 0.3);
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .admin-status-badge.visible {
+            display: inline-flex;
+        }
+
+        .bonus-stars {
+            padding: 24px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f28c3d, #c79463);
+            color: #fff;
+            box-shadow: 0 18px 38px rgba(242, 140, 61, 0.28);
+        }
+
+        .bonus-stars h3 {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stars-count {
+            margin-top: 10px;
+            font-size: clamp(42px, 6vw, 58px);
+            line-height: 1;
+            font-weight: 950;
+            letter-spacing: 0;
+        }
+
+        .profile-card {
+            padding: 24px;
+        }
+
+        .profile-card h3,
+        .edit-form h3 {
+            margin: 0 0 18px;
+            color: var(--profile-text);
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 24px;
+        }
+
+        .profile-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .profile-card-head h3 {
+            margin: 0;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .info-item {
+            display: grid;
+            gap: 6px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(106, 75, 60, 0.1);
+        }
+
+        .info-item:last-child {
+            border-bottom: 0;
+        }
+
+        .info-label {
+            color: var(--profile-muted);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .info-value {
+            color: var(--profile-text);
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-inline-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .profile-edit-field {
+            display: none;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 13px;
+            border: 1px solid rgba(106, 75, 60, 0.18);
+            border-radius: 12px;
+            background: #fffaf5;
+            color: var(--profile-text);
+            font: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .profile-edit-field:focus {
+            outline: none;
+            border-color: rgba(242, 140, 61, 0.68);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(242, 140, 61, 0.12);
+        }
+
+        .inline-edit-actions {
+            display: none;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .profile-inline-form.is-editing .editable-info .info-value {
+            display: none;
+        }
+
+        .profile-inline-form.is-editing .profile-edit-field {
+            display: block;
+        }
+
+        .profile-inline-form.is-editing .inline-edit-actions {
+            display: flex;
+        }
+
+        .profile-inline-form.is-editing #profileEditBtn {
+            display: none;
+        }
+
+        .promo-card p {
+            margin: 0 0 18px;
+            color: var(--profile-muted);
+            line-height: 1.55;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: end;
+        }
+
+        .promo-row {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+
+        .form-group {
+            min-width: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--profile-text);
+            font-weight: 800;
+        }
+
+        .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 15px;
+            border: 1px solid rgba(106, 75, 60, 0.18);
+            border-radius: 14px;
+            background: #fffaf5;
+            color: var(--profile-text);
+            font: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: rgba(242, 140, 61, 0.68);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(242, 140, 61, 0.12);
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 14px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .profile-btn {
+            min-height: 48px;
+            min-width: 150px;
+            padding: 12px 20px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.15;
+            box-sizing: border-box;
+        }
+
+        .btn-primary {
+            background: var(--profile-orange);
+            color: #fff;
+            box-shadow: 0 14px 26px rgba(242, 140, 61, 0.24);
+        }
+
+        .btn-secondary {
+            background: #fffaf5;
+            color: #5d4134;
+            border-color: rgba(106, 75, 60, 0.22);
+        }
+
+        .btn-danger {
+            background: #fff7f5;
+            color: var(--profile-danger);
+            border-color: rgba(158, 74, 63, 0.28);
+        }
+
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(74, 54, 40, 0.12);
+        }
+
+        .btn-primary:hover {
+            background: var(--profile-orange-dark);
+            box-shadow: 0 16px 30px rgba(242, 140, 61, 0.32);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(106, 75, 60, 0.06);
+            border-color: rgba(106, 75, 60, 0.36);
+        }
+
+        .btn-danger:hover {
+            background: rgba(158, 74, 63, 0.08);
+            border-color: rgba(158, 74, 63, 0.42);
+        }
+
+        .profile-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .profile-edit-inline {
+            min-height: 38px;
+            min-width: 0;
+            padding: 9px 14px;
+            font-size: 13px;
+            white-space: nowrap;
+            box-shadow: 0 10px 20px rgba(242, 140, 61, 0.18);
+        }
+
+        .edit-form {
+            display: none;
+            padding: 24px;
+        }
+
+        .edit-form.active {
+            display: block;
+        }
+
+        .message {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .error-message {
+            color: #a74035;
+            background: #fff0ed;
+            border: 1px solid rgba(158, 74, 63, 0.2);
+        }
+
+        .success-message {
+            color: #287a4d;
+            background: #effaf3;
+            border: 1px solid rgba(40, 122, 77, 0.18);
+        }
+
+        .codes-panel {
+            margin-top: 18px;
+        }
+
+        .codes-panel h4 {
+            margin: 0 0 10px;
+            color: var(--profile-text);
+            font-size: 15px;
+        }
+
+        .promo-code-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .promo-code-item {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 6px;
+            align-items: center;
+            padding: 9px 42px 9px 11px;
+            border: 1px solid rgba(106, 75, 60, 0.12);
+            border-radius: 12px;
+            background: #fffaf5;
+            transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+        }
+
+        .promo-code-item:hover {
+            transform: translateY(-1px);
+            border-color: rgba(242, 140, 61, 0.32);
+            background: #fff;
+        }
+
+        .promo-code-main {
+            min-width: 0;
+        }
+
+        .promo-code-main strong {
+            display: block;
+            color: var(--profile-text);
+            font-size: 13px;
+        }
+
+        .promo-code-main code {
+            display: block;
+            margin-top: 3px;
+            color: #6a4b3c;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .promo-stars {
+            color: #c27b26;
+            font-size: 13px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(106, 75, 60, 0.16);
+            border-radius: 10px;
+            display: inline-grid;
+            place-items: center;
+            background: #fff;
+            color: #6a4b3c;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(242, 140, 61, 0.08);
+            border-color: rgba(242, 140, 61, 0.32);
+        }
+
+        .icon-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .promo-remove-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            opacity: 0.78;
+        }
+
+        .promo-remove-btn svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .promo-empty {
+            color: var(--profile-muted);
+            padding: 12px;
+            border: 1px dashed rgba(106, 75, 60, 0.18);
+            border-radius: 12px;
+            background: rgba(255, 250, 245, 0.7);
+        }
+
+        @media (max-width: 900px) {
+            .profile-shell {
+                width: min(100% - 28px, 680px);
+                margin: 150px auto 24px;
+            }
+
+            .profile-layout,
+            .profile-info {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-identity-card,
+            .profile-card,
+            .edit-form,
+            .bonus-stars {
+                padding: 20px;
+            }
+
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 30px;
+            }
+
+            .form-row,
+            .promo-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .profile-btn {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-layout,
+            .profile-sidebar,
+            .profile-main,
+            .profile-info,
+            .form-row,
+            .promo-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                width: 100%;
+            }
+
+            .profile-card-head {
+                display: grid;
+                grid-template-columns: 1fr;
+                align-items: start;
+            }
+
+            .profile-edit-inline {
+                width: 100%;
+                margin-top: 2px;
+            }
+
+            .inline-edit-actions {
+                display: none;
+                grid-template-columns: 1fr;
+            }
+
+            .profile-inline-form.is-editing .inline-edit-actions {
+                display: grid;
+            }
+        }
+    </style>
+  <script src="site-notifications.js"></script>
+</head>
+<body>
+<div id="categoryPanel" class="category-panel">
+  <button id="closeCategories" class="close-category">&times;</button>
+  
+  <!-- Authentication Section for Side Menu -->
+  <div id="sideMenuAuth" class="side-menu-auth">
+    <!-- Show when user is NOT logged in -->
+    <div id="guestSideSection" class="guest-side-section">
+      <h3>Акаунт</h3>
+      <div class="auth-links">
+        <a href="auth.html" class="auth-menu-link">🔑 Вхід</a>
+        <a href="auth.html?tab=register" class="auth-menu-link">📝 Реєстрація</a>
+      </div>
+
+    </div>
+    
+    <!-- Show when user IS logged in -->
+    <div id="userSideSection" class="user-side-section" style="display: none;">
+      <h3>Мій акаунт</h3>
+      <div class="user-info-side">
+        <p class="user-greeting-side"><span id="userNameSide">Користувач</span></p>
+        <p class="user-stars-side">⭐ <span id="userStarsSide">0</span> бонусних зірок</p>
+      </div>
+      <div class="auth-links">
+        <a href="profile.html" class="auth-menu-link">👤 Мій профіль</a>
+        <a href="admin.html" class="auth-menu-link">⚙️ Адмін-панель</a>
+        <a href="#" onclick="logoutUser()" class="auth-menu-link">🚪 Вийти</a>
+      </div>
+    </div>
+  </div>
+  
+  <h3>Категорії</h3>
+  <ul>
+    <!-- Категории будут добавлены динамически через updateCategoryPanel() -->
+  </ul>
+  
+  <h3>Додаткові опції</h3>
+  <ul>
+    <li><a href="about.html">Про нас</a></li>
+    <li><a href="info.html">Корисна інформація</a></li>
+    <li><a href="#homeMasterclasses">Майстер-класи</a></li>
+    <li><a href="#homeCertificates">Подарункові сертифікати</a></li>
+    <li><a href="contacts.html">Контакти</a></li>
+  </ul>
+</div>
+
+
+<header class="floating-header">
+  <div class="header-inner">
+    <!-- Mobile-only: three-bar text (no label) to open side panel -->
+    <a href="#" id="openMenuMobile" class="menu-link mobile-only" aria-label="Меню">☰</a>
+    <img src="logo.png" alt="Art Light" class="logo" />
+
+    <nav class="nav-links">
+     <button id="openMenu" class="menu-button icon-button ghost" aria-label="Меню">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+          <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+     </button>
+      <a href="about.html" class="about-link">Про нас</a>
+      <a href="contacts.html" class="contacts-link">Контакти</a>
+      
+      
+      
+      <div class="bonus-counter">
+        <span class="stars-icon">⭐</span>
+        <span id="bonusStars">0</span> зірок
+        <div class="bonus-tooltip">
+          <p>За кожну покупку ви отримуєте 10 зірок!</p>
+          <p>1 зірка = 1 грн знижки</p>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile stars pill with tooltip -->
+    <div class="mobile-stars mobile-only" aria-hidden="false">
+      <div class="mobile-stars-tooltip">
+        За кожну покупку ви отримуєте 10 зірок!<br>1 зірка = 1 грн знижки
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gStar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFD95A"/>
+            <stop offset="100%" stop-color="#F5C542"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#gStar)" d="M12 2l2.9 5.88 6.5.95-4.7 4.58 1.1 6.47L12 17.77 6.2 19.88l1.1-6.47-4.7-4.58 6.5-.95L12 2z"/>
+      </svg>
+      <span id="bonusStarsMobile">0</span>
+      <span class="stars-label">зірок</span>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Пошук..." />
+
+      <button type="button" id="headerSearchBtn" class="search-icon icon-button ghost" aria-label="Пошук">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+<!-- Mobile search drawer (hidden by default) -->
+<div id="mobileSearch" class="mobile-search" aria-hidden="true">
+  <div class="mobile-search-inner">
+    <button type="button" class="mobile-search-close" aria-label="Закрити">×</button>
+    <input type="text" id="mobileSearchInput" placeholder="Пошук..." autocomplete="off" />
+    <button type="button" class="mobile-search-go" aria-label="Пошук">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="#b9825a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+    </button>
+  </div>
+  <div class="mobile-search-chips" aria-label="Швидкий пошук"></div>
+  <div class="mobile-search-sort" aria-label="Сортування/фільтр за категоріями"></div>
+  <div class="mobile-search-suggestion" id="mobileSearchHint" aria-hidden="true">Введіть запит для пошуку товарів</div>
+  
+  
+</div>
+<div id="searchBackdrop" class="search-backdrop" aria-hidden="true"></div>
+
+<div id="cartIcon" class="icon-button accent cart-icon" onclick="openCart()" aria-label="Відкрити кошик">
+  <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+    <path d="M6 6h15l-1.5 8h-11z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="20" r="1.2" />
+    <circle cx="17" cy="20" r="1.2" />
+  </svg>
+  <span id="cartCount">0</span>
+</div>
+
+<main class="profile-shell">
+        <header class="profile-page-head">
+            <h1>Профіль користувача</h1>
+            <p>Керуйте особистими даними, бонусними зірками та подарунковими промокодами Art Light.</p>
+        </header>
+
+        <div class="profile-layout">
+            <aside class="profile-sidebar">
+                <section class="profile-card profile-identity-card">
+                    <div id="profileAvatar" class="profile-avatar" aria-hidden="true">A</div>
+                    <h2 id="profileDisplayName" class="profile-name">Користувач</h2>
+                    <p id="profileDisplayEmail" class="profile-email">-</p>
+                    <div id="adminStatusBadge" class="admin-status-badge">Адміністратор сайту</div>
+                </section>
+
+                <section class="bonus-stars">
+                    <h3>Бонусний баланс</h3>
+                    <div class="stars-count" id="bonusStarsCount">0 ⭐</div>
+                </section>
+            </aside>
+
+            <section class="profile-main">
+                <form id="profileForm" class="profile-inline-form">
+                <div class="profile-info">
+                    <section class="profile-card">
+                        <div class="profile-card-head">
+                            <h3>Особисті дані</h3>
+                            <button type="button" id="profileEditBtn" class="profile-btn btn-primary profile-edit-inline" onclick="toggleEditForm()">Редагувати</button>
+                        </div>
+                        <div class="info-item editable-info">
+                            <span class="info-label">Ім'я</span>
+                            <span class="info-value" id="displayFirstName">-</span>
+                            <input class="profile-edit-field" type="text" id="editFirstName" name="firstName" required>
+                        </div>
+                        <div class="info-item editable-info">
+                            <span class="info-label">Прізвище</span>
+                            <span class="info-value" id="displayLastName">-</span>
+                            <input class="profile-edit-field" type="text" id="editLastName" name="lastName" required>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Логін</span>
+                            <span class="info-value" id="displayUsername">-</span>
+                        </div>
+                        <div class="info-item editable-info">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="displayEmail">-</span>
+                            <input class="profile-edit-field" type="email" id="editEmail" name="email" required>
+                        </div>
+                        <div class="inline-edit-actions">
+                            <button type="submit" class="profile-btn btn-primary">Зберегти</button>
+                            <button type="button" class="profile-btn btn-secondary" onclick="cancelEdit()">Скасувати</button>
+                        </div>
+                    </section>
+
+                    <section class="profile-card">
+                        <h3>Контактні дані</h3>
+                        <div class="info-item editable-info">
+                            <span class="info-label">Телефон</span>
+                            <span class="info-value" id="displayPhone">Не вказано</span>
+                            <input class="profile-edit-field" type="tel" id="editPhone" name="phone">
+                        </div>
+                        <div class="info-item editable-info">
+                            <span class="info-label">Адреса</span>
+                            <span class="info-value" id="displayAddress">Не вказано</span>
+                            <input class="profile-edit-field" type="text" id="editAddress" name="address">
+                        </div>
+                    </section>
+                </div>
+                <div id="editMessage"></div>
+                </form>
+
+                <section class="profile-card promo-card">
+                    <h3>Промокоди</h3>
+                    <p>Сертифікати електронні. Після покупки введіть промокод нижче, щоб зарахувати зірки на рахунок.</p>
+                    <div class="form-row promo-row">
+                        <div class="form-group">
+                            <label for="promoCodeInput">Промокод</label>
+                            <input type="text" id="promoCodeInput" placeholder="Наприклад: ABCD-EF12-GH34">
+                        </div>
+                        <button id="redeemPromoBtn" class="profile-btn btn-primary" type="button">Активувати</button>
+                    </div>
+                    <div id="promoMessage"></div>
+                    <div class="codes-panel">
+                        <h4>Неактивовані промокоди</h4>
+                        <div id="unactivatedCodesList" class="promo-code-list"></div>
+                    </div>
+                </section>
+
+                <div class="profile-actions">
+                    <a href="index.html" class="profile-btn btn-secondary">Повернутися</a>
+                    <button class="profile-btn btn-danger" onclick="logout()">Вийти</button>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="shared-header.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
