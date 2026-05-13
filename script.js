@@ -123,9 +123,16 @@ function categoryCompareKey(value) {
   return normalizeCategoryLabel(value).toLocaleLowerCase('uk-UA').normalize('NFKC');
 }
 
-function canonicalCategoryMap(products = allProducts) {
+function categoryProductsSource(products) {
+  if (Array.isArray(products)) return products;
+  if (typeof allProducts !== 'undefined' && Array.isArray(allProducts) && allProducts.length) return allProducts;
+  if (Array.isArray(window.productsData)) return window.productsData;
+  return [];
+}
+
+function canonicalCategoryMap(products) {
   const map = new Map();
-  (products || []).forEach((product) => {
+  categoryProductsSource(products).forEach((product) => {
     const label = normalizeCategoryLabel(product && product.category);
     if (!label) return;
     const key = categoryCompareKey(label);

@@ -492,9 +492,7 @@ async function initSharedStoreHeader() {
   fetch(`products.json?t=${Date.now()}`, { cache: 'no-store' })
     .then(response => response.ok ? response.json() : [])
     .then(products => {
-      const categories = [...new Set((Array.isArray(products) ? products : [])
-        .map(product => product.category)
-        .filter(Boolean))];
+      const categories = uniqueProductCategories(products);
       const list = panel?.querySelector('ul');
       if (!list || !categories.length) return;
       list.innerHTML = [
@@ -1084,6 +1082,33 @@ function itemTitle(item, index) {
   return item.title || item.name || item.id || item.code || `Запис ${index + 1}`;
 }
 
+function normalizeCategoryLabel(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function categoryCompareKey(value) {
+  return normalizeCategoryLabel(value).toLocaleLowerCase('uk-UA').normalize('NFKC');
+}
+
+function uniqueProductCategories(products) {
+  const byKey = new Map();
+  (Array.isArray(products) ? products : []).forEach(product => {
+    const category = normalizeCategoryLabel(product && product.category);
+    if (!category) return;
+    const key = categoryCompareKey(category);
+    if (!byKey.has(key)) byKey.set(key, category);
+  });
+  return Array.from(byKey.values()).sort((a, b) => a.localeCompare(b));
+}
+
+function canonicalProductCategory(value, products = currentItems) {
+  const category = normalizeCategoryLabel(value);
+  if (!category) return '';
+  const key = categoryCompareKey(category);
+  const existing = uniqueProductCategories(products).find(item => categoryCompareKey(item) === key);
+  return existing || category;
+}
+
 function itemSubtitle(item) {
   if (!item) return '';
   if (currentResource === 'admins') return item.email || `ID акаунта: ${item.site_user_id || 'не вказано'}`;
@@ -1345,7 +1370,8 @@ function renderFieldEditor(item, galleryAnimation = null) {
       `).join('');
       return `<label class="${cls}"><span>${field.label}</span>${hint}<select data-key="${field.key}" data-type="select">${options}</select></label>`;
     }
-    return `<label class="${cls}"><span>${field.label}</span>${hint}<input data-key="${field.key}" data-type="${field.type || 'text'}" type="${field.type === 'number' ? 'number' : 'text'}" value="${escapeHtml(value)}">${videoPreview}</label>`;
+    const categoryListAttr = currentResource === 'products' && field.key === 'category' ? ' list="productCategoryOptions" autocomplete="off"' : '';
+    return `<label class="${cls}"><span>${field.label}</span>${hint}<input data-key="${field.key}" data-type="${field.type || 'text'}" type="${field.type === 'number' ? 'number' : 'text'}" value="${escapeHtml(value)}"${categoryListAttr}>${videoPreview}</label>`;
   };
 
   if (currentResource === 'products') {
@@ -1358,6 +1384,9 @@ function renderFieldEditor(item, galleryAnimation = null) {
           ${renderField(byKey.category)}
           ${renderField(byKey.description)}
         </div>
+        <datalist id="productCategoryOptions">
+          ${uniqueProductCategories(currentItems).map(category => `<option value="${escapeHtml(category)}"></option>`).join('')}
+        </datalist>
       </section>
       <section class="editor-block editor-block-pricing">
         <h4>Ціноутворення</h4>
@@ -1445,6 +1474,13 @@ function renderFieldEditor(item, galleryAnimation = null) {
     input.addEventListener('input', syncJsonFromFields);
     input.addEventListener('change', syncJsonFromFields);
   });
+  if (currentResource === 'products') {
+    const categoryInput = $('fieldEditor').querySelector('[data-key="category"]');
+    categoryInput?.addEventListener('blur', () => {
+      categoryInput.value = canonicalProductCategory(categoryInput.value);
+      syncJsonFromFields();
+    });
+  }
   if (currentResource === 'admins') {
     $('adminRoleSelect')?.addEventListener('change', () => {
       syncJsonFromFields();
@@ -1480,6 +1516,7 @@ function syncJsonFromFields() {
     if (!key) return;
     if (type === 'number') data[key] = Number(input.value) || 0;
     else if (type === 'lines') data[key] = input.value.split('\n').map(v => v.trim()).filter(Boolean);
+    else if (currentResource === 'products' && key === 'category') data[key] = canonicalProductCategory(input.value);
     else data[key] = input.value;
   });
   if (currentResource === 'admins') {
