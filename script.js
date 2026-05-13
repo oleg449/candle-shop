@@ -232,6 +232,42 @@ function hasActiveAccountSession() {
   return false;
 }
 
+function normalizeCategoryLabel(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function categoryCompareKey(value) {
+  return normalizeCategoryLabel(value).toLocaleLowerCase('uk-UA').normalize('NFKC');
+}
+
+function categoryProductsSource(products) {
+  if (Array.isArray(products)) return products;
+  if (typeof allProducts !== 'undefined' && Array.isArray(allProducts) && allProducts.length) return allProducts;
+  if (Array.isArray(window.productsData)) return window.productsData;
+  return [];
+}
+
+function canonicalCategoryMap(products) {
+  const map = new Map();
+  categoryProductsSource(products).forEach((product) => {
+    const label = normalizeCategoryLabel(product && product.category);
+    if (!label) return;
+    const key = categoryCompareKey(label);
+    if (!map.has(key)) map.set(key, label);
+  });
+  return map;
+}
+
+function productCategoryLabel(product) {
+  const fallback = 'Інші товари';
+  const label = normalizeCategoryLabel(product && product.category) || fallback;
+  return canonicalCategoryMap().get(categoryCompareKey(label)) || label;
+}
+
+function categoriesEqual(a, b) {
+  return categoryCompareKey(a) === categoryCompareKey(b);
+}
+
 // === Mobile Search (chips + sort) ===
 // Build unique, sorted categories from loaded products
 function getCategoriesFromProducts() {
