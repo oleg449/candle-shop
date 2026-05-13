@@ -2,7 +2,7 @@ services:
   - type: web
     name: candle-shop-web
     env: node
-    buildCommand: npm ci
+    buildCommand: npm ci && npm rebuild sqlite3 --build-from-source
     startCommand: node server.js
     autoDeploy: true
     envVars:
