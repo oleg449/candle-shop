@@ -1127,7 +1127,8 @@ app.delete('/api/admin/data/:resource/:id', requireAdminPanelAccess, (req, res) 
     const idx = findArrayIndex(items, req.params.id);
     if (idx < 0) return res.status(404).json({ error: 'Item not found' });
     const removed = items.splice(idx, 1)[0];
-    writeJsonFile(config.file, items);
+    const nextItems = req.params.resource === 'products' ? normalizeProductCategories(items) : items;
+    writeJsonFile(config.file, nextItems);
     res.json({ success: true, removed });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete item' });

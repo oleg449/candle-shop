@@ -494,7 +494,7 @@ async function initSharedStoreHeader() {
     .then(products => {
       const categories = uniqueProductCategories(products);
       const list = panel?.querySelector('ul');
-      if (!list || !categories.length) return;
+      if (!list) return;
       list.innerHTML = [
         '<li><a href="index.html">Усі товари</a></li>',
         ...categories.map(category => `<li><a href="index.html?category=${encodeURIComponent(category)}">${escapeHtml(category)}</a></li>`)
