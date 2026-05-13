@@ -460,7 +460,7 @@ function addToCart(title, price) {
 function addCertificateToCart(stars) {
   const certStars = parseInt(stars, 10) || 0;
   if (!certStars) return;
-  const title = `Сертифікат ${certStars} грн`;
+  const title = `Подарунковий сертифікат ${certStars} грн`;
   const existing = cart.find(item => item.isCertificate && Number(item.certificateStars) === certStars);
   if (existing) {
     if (existing.quantity >= 10) {
@@ -2414,18 +2414,18 @@ function openCertificateModal(stars) {
   if (!cert) return;
   const modal = showHomeExperienceModal(`
     <div class="home-experience-media certificate-media">
-      <img src="${homeEscapeHtml(cert.image)}" alt="Сертифікат ${homeEscapeHtml(cert.stars)} зірок">
+      <img src="${homeEscapeHtml(cert.image)}" alt="Подарунковий сертифікат ${homeEscapeHtml(cert.stars)} зірок">
       ${cert.popular ? '<span class="home-experience-ribbon">Популярний вибір</span>' : ''}
     </div>
     <div class="home-experience-info">
       <span class="home-experience-eyebrow">Подарунковий сертифікат</span>
-      <h2>Сертифікат на ${homeEscapeHtml(cert.stars)} грн</h2>
-      <p>${homeEscapeHtml(cert.note)} Сертифікат приходить у електронному форматі після підтвердження оплати адміністратором.</p>
+      <h2>Подарунковий сертифікат на ${homeEscapeHtml(cert.stars)} грн</h2>
+      <p>${homeEscapeHtml(cert.note)} Подарунковий сертифікат приходить у електронному форматі після підтвердження оплати адміністратором. Промокод потрібно активувати у профілі.</p>
       <div class="home-experience-facts">
         <span>${homeEscapeHtml(cert.term)}</span>
         <span>${homeEscapeHtml(cert.stars)} бонусних зірок</span>
         <span>1 ⭐ = 1 грн знижки</span>
-        <span>Промокод після оплати</span>
+        <span>Промокод потрібно активувати у профілі</span>
       </div>
       <div class="home-experience-price"><span>Номінал</span><strong>${homeEscapeHtml(cert.stars)} грн</strong></div>
       <div class="home-experience-actions">
@@ -2496,17 +2496,17 @@ function renderHomeCertificates() {
     <article class="home-certificate-card ${cert.popular ? 'popular' : ''}">
       ${cert.popular ? '<div class="home-card-ribbon">Популярний вибір</div>' : ''}
       <button class="home-card-image-button" type="button" onclick="openCertificateModal(${cert.stars})" aria-label="Відкрити сертифікат ${homeEscapeHtml(cert.stars)} зірок">
-        <img src="${homeEscapeHtml(cert.image)}" alt="Сертифікат ${homeEscapeHtml(cert.stars)} зірок" loading="lazy">
+        <img src="${homeEscapeHtml(cert.image)}" alt="Подарунковий сертифікат ${homeEscapeHtml(cert.stars)} зірок" loading="lazy">
       </button>
       <div class="home-card-body">
-        <h3>Сертифікат</h3>
+        <h3>Подарунковий сертифікат</h3>
         <strong>${homeEscapeHtml(cert.stars)} грн</strong>
         <p>${homeEscapeHtml(cert.note)}</p>
         <ul>
           <li>${homeEscapeHtml(cert.term)}</li>
           <li>${homeEscapeHtml(cert.stars)} бонусних зірок після активації</li>
           <li>Електронний формат</li>
-          <li>Промокод після підтвердження оплати</li>
+          <li>Промокод потрібно активувати у профілі</li>
         </ul>
         <button type="button" onclick="openCertificateModal(${cert.stars})">Детальніше</button>
       </div>
@@ -2584,7 +2584,7 @@ function showCertificateCodePopup(payload) {
     modal.innerHTML = `
       <div class="certificate-code-card" role="dialog" aria-modal="true" aria-labelledby="certificateCodeTitle">
         <button class="certificate-code-close" type="button" aria-label="Закрити">&times;</button>
-        <span class="certificate-code-eyebrow">Сертифікат активовано</span>
+        <span class="certificate-code-eyebrow">Подарунковий сертифікат активовано</span>
         <h2 id="certificateCodeTitle">Ваш промокод готовий</h2>
         <p>Оплату підтверджено. Скопіюйте код і активуйте його у профілі, щоб отримати бонусні зірки.</p>
         <button class="certificate-code-value" type="button" title="Натисніть, щоб скопіювати"></button>
@@ -2666,7 +2666,7 @@ function notificationToastText(item) {
     return 'Ви оформили замовлення. Ми отримали його і скоро опрацюємо.';
   }
   if (item.type === 'certificate_issued' && payload.code) {
-    return `Сертифікат готовий. Ваш промокод: ${formatCertificateCode(payload.code)}`;
+    return `Подарунковий сертифікат готовий. Ваш промокод: ${formatCertificateCode(payload.code)}`;
   }
   if (item.type === 'payment_confirmed') return 'Оплату підтверджено. Дякуємо, ми вже готуємо ваше замовлення до виконання.';
   if (item.type === 'order_status') return 'Статус вашого замовлення оновлено.';
