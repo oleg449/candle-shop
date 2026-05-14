@@ -264,17 +264,21 @@ nav a {
 .hero {
   margin: 180px auto 60px;
   width: min(1200px, 90%);
-  background: linear-gradient(120deg, rgba(242,140,61,0.12), rgba(255,255,255,0.15));
+  background: #fff7ef;
   border: 1px solid rgba(242,140,61,0.15);
   border-radius: var(--radius-xl);
-  padding: clamp(32px, 6vw, 80px);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(24px, 4vw, 48px);
-  align-items: center;
+  padding: 0;
+  display: block;
   position: relative;
   overflow: hidden;
   box-shadow: var(--card-shadow);
+}
+
+.hero::before {
+  content: "";
+  display: block;
+  min-height: clamp(285px, 34vw, 470px);
+  background: url('images/banner.jpg') center top/cover no-repeat;
 }
 
 .hero::after {
@@ -287,8 +291,12 @@ nav a {
 }
 
 .hero-content {
+  position: relative;
   z-index: 1;
-  text-align: left;
+  background: rgba(255, 248, 240, 0.96);
+  padding: 24px clamp(20px, 5vw, 56px) 28px;
+  text-align: center;
+  border-top: 1px solid rgba(242,140,61,0.15);
 }
 
 .hero-eyebrow {
@@ -316,8 +324,9 @@ nav a {
 .hero-cta {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 18px;
 }
 
 .primary-btn,
@@ -359,6 +368,7 @@ nav a {
 
 .hero-stats {
   display: flex;
+  justify-content: center;
   gap: 24px;
   flex-wrap: wrap;
 }
@@ -1152,14 +1162,18 @@ nav a {
 @media (max-width: 768px) {
   /* Push main content below the fixed floating header on mobile */
   body { padding-top: 300px; }
-  /* Keep some inner spacing in the hero as well */
-  .hero { padding-top: 100px !important; }
   .hero h2 { margin-top: 8px; }
 
   .hero {
     margin: 140px auto 32px;
-    padding: 48px 24px 36px;
+    padding: 0;
     gap: 24px;
+  }
+
+  .hero::before {
+    min-height: 275px;
+    background-size: auto 430px;
+    background-position: center top;
   }
 
   .hero h1 {
@@ -1186,7 +1200,8 @@ nav a {
   }
 
   .hero-content {
-    margin-top: 48px;
+    margin-top: 0;
+    padding: 20px 16px 24px;
   }
 
   .hero-cta {
@@ -1205,7 +1220,8 @@ nav a {
   }
 
   .hero-cta .secondary-btn {
-    width: 100%;
+    width: min(280px, calc(100% - 36px));
+    align-self: center;
     padding: 12px 20px;
     border: 1px solid rgba(42,24,18,0.35);
     color: #4a3529;
@@ -1213,18 +1229,17 @@ nav a {
   }
 
   .hero-stats {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   .hero-stats div {
     flex: 1;
-    min-width: 0;
+    min-width: 140px;
     padding: 10px 12px;
     box-shadow: none;
-    background: rgba(255,255,255,0.55);
+    background: rgba(255,255,255,0.78);
   }
 
   .stat-number {
@@ -3431,11 +3446,6 @@ body.mobile-search-open { overflow: hidden; }
 }
 
 .hero {
-  background-image: url('background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  padding: 100px 20px; /* настройте отступы при необходимости */
   text-align: center;
 }
 
@@ -4779,12 +4789,9 @@ body.mobile-search-open { overflow: hidden; }
   /* Hero */
   .hero {
     height: auto;
-    min-height: 220px;       /* ensure background area is tall enough */
-    padding: 56px 12px 24px; /* bigger top gap under header, keep bg visible */
+    padding: 0;
     margin-top: 14px;        /* local baseline; final margin-top set later to 150px */
     margin-bottom: 40px;     /* space before products */
-    background-size: cover;  /* fill nicely */
-    background-position: center top; /* show more top of the image */
   }
   .hero h2 {
     font-size: 1.32rem;
@@ -5214,7 +5221,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
     .menu-link.mobile-only:active,
     .menu-link.mobile-only:focus,
     .menu-link.mobile-only:hover { color: #6c4a3c !important; }
-    .hero { margin-top: 0; }
+    .hero { margin-top: 120px; }
     .nav-links { gap: 8px; flex-wrap: nowrap; }
     .bonus-counter { display: none; }
     .nav-links a { font-size: 15px; }
