@@ -702,6 +702,10 @@ body.admin-locked .admin-shell {
   gap: 12px;
 }
 
+.admin-section-select {
+  display: none;
+}
+
 .admin-tab {
   display: flex;
   align-items: center;
@@ -4382,11 +4386,14 @@ body.image-lightbox-open {
 
   .admin-shell {
     grid-template-columns: 1fr;
-    padding: 14px;
+    gap: 14px;
+    padding: 12px;
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
   }
 
   .revenue-card {
@@ -4396,15 +4403,62 @@ body.image-lightbox-open {
   .admin-sidebar {
     position: static;
     min-height: auto;
+    padding: 10px;
+    border-radius: 18px;
   }
 
   .admin-nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: none;
+  }
+
+  .admin-section-select {
+    display: grid;
+    gap: 6px;
+  }
+
+  .admin-section-select span {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .admin-section-select select {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid rgba(224, 215, 198, 0.95);
+    border-radius: 14px;
+    padding: 0 42px 0 14px;
+    background:
+      linear-gradient(45deg, transparent 50%, var(--primary-dark) 50%) calc(100% - 22px) 50% / 7px 7px no-repeat,
+      linear-gradient(135deg, var(--primary-dark) 50%, transparent 50%) calc(100% - 16px) 50% / 7px 7px no-repeat,
+      rgba(255, 255, 255, 0.86);
+    color: var(--text-strong);
+    font: 800 15px var(--sans);
+    appearance: none;
+    box-shadow: 0 10px 22px rgba(74, 54, 40, 0.06);
   }
 
   .admin-tab {
-    min-height: 44px;
-    padding: 11px 12px;
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 40px;
+    padding: 10px 13px;
+    border-radius: 999px;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+
+  .admin-tab-emoji {
+    flex-basis: 18px;
+    margin-right: 6px;
+    font-size: 15px;
+  }
+
+  .admin-tab.active {
+    box-shadow: inset 0 -3px 0 var(--primary);
+    transform: none;
   }
 
   .admin-tab:hover {
@@ -4414,6 +4468,52 @@ body.image-lightbox-open {
   .admin-topbar {
     align-items: flex-start;
     flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 0 2px;
+  }
+
+  .admin-topbar h2 {
+    font-size: 34px;
+  }
+
+  .eyebrow {
+    margin-bottom: 4px;
+    font-size: 11px;
+  }
+
+  button.stat-card {
+    min-height: 94px;
+  }
+
+  .stat-card {
+    gap: 10px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .stats-info {
+    max-width: none;
+    padding-right: 0;
+  }
+
+  .stats-info span {
+    font-size: 12px;
+  }
+
+  .stats-info strong {
+    margin-top: 6px;
+    font-size: 26px;
+  }
+
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .stat-icon svg {
+    width: 18px;
+    height: 18px;
   }
 
   .order-card-head {
@@ -4578,12 +4678,28 @@ body.image-lightbox-open {
 
 @media (max-width: 768px) {
   body.has-store-header .admin-shell {
-    padding: 132px 14px 14px;
+    padding: 132px 12px 14px;
   }
 
   body.has-store-header .admin-sidebar {
-    top: 126px;
+    position: sticky;
+    top: 118px;
+    z-index: 60;
     min-height: auto;
+    max-height: none;
+    margin: 0 -2px;
+    background: rgba(255, 249, 241, 0.94);
+    backdrop-filter: blur(12px);
+  }
+
+  .admin-sidebar-head,
+  .admin-sidebar > .back-link,
+  .admin-sidebar > h1 {
+    display: none !important;
+  }
+
+  .admin-content {
+    padding-top: 0;
   }
 
   .floating-header {

@@ -1,4 +1,11 @@
-﻿const API = '/api/admin';
+﻿const API_ROOT = (() => {
+  if (window.API_BASE_URL) return String(window.API_BASE_URL).replace(/\/$/, '');
+  if (window.location.hostname === 'localhost' && window.location.port && window.location.port !== '3000') {
+    return 'http://localhost:3000/api';
+  }
+  return '/api';
+})();
+const API = `${API_ROOT}/admin`;
 
 const sections = {
   info: { title: 'Інформація' },
@@ -231,7 +238,7 @@ async function activateAdminGate(event) {
       message.textContent = 'Перевіряємо промокод...';
       message.style.color = '#8B7667';
     }
-    const response = await fetch('/api/certificates/redeem', {
+    const response = await fetch(`${API_ROOT}/certificates/redeem`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
@@ -266,6 +273,10 @@ function showSection(name) {
   document.querySelectorAll('.admin-tab').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.section === name);
   });
+  const mobileSectionSelect = $('mobileAdminSection');
+  if (mobileSectionSelect && mobileSectionSelect.value !== name) {
+    mobileSectionSelect.value = name;
+  }
   document.querySelectorAll('.admin-section').forEach(section => section.classList.remove('active'));
 
   if (name === 'info') $('infoSection').classList.add('active');
@@ -322,6 +333,14 @@ function applyAdminAccessUI() {
     tab.hidden = !allowed;
     tab.disabled = !allowed;
   });
+  const mobileSectionSelect = $('mobileAdminSection');
+  if (mobileSectionSelect) {
+    Array.from(mobileSectionSelect.options).forEach(option => {
+      const allowed = currentAdminHasPermission(SECTION_PERMISSIONS[option.value]);
+      option.hidden = !allowed;
+      option.disabled = !allowed;
+    });
+  }
 }
 
 function decorateAdminTabs() {
@@ -378,6 +397,12 @@ async function initSharedStoreHeader() {
         visibility: visible;
         pointer-events: auto;
         transition: opacity 0.3s ease, visibility 0s linear 0s;
+      }
+
+      @media (max-width: 768px) {
+        #cartIcon {
+          display: none !important;
+        }
       }
     </style>
     <div class="admin-store-backdrop" aria-hidden="true"></div>
@@ -3349,6 +3374,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.admin-tab').forEach(btn => {
     btn.addEventListener('click', () => showSection(btn.dataset.section));
   });
+  $('mobileAdminSection')?.addEventListener('change', event => showSection(event.target.value));
   $('refreshBtn').addEventListener('click', loadCurrentSection);
   $('newItemBtn').addEventListener('click', () => selectItem(null, null));
   $('deleteItemBtn').addEventListener('click', deleteEntity);

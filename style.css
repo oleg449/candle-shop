@@ -1171,8 +1171,9 @@ nav a {
   }
 
   .hero::before {
-    min-height: 275px;
-    background-size: auto 430px;
+    min-height: 360px;
+    background-image: url('images/banner_mobile.png');
+    background-size: cover;
     background-position: center top;
   }
 
@@ -1347,7 +1348,7 @@ nav a {
 .product button {
   width: fit-content;
   min-width: 132px;
-  margin: 16px auto 0;
+  margin: auto auto 0;
   background: var(--accent);
   color: white;
   border: none;
@@ -2144,6 +2145,10 @@ form button:hover {
 
 .order-direct-btn:hover {
   background-color: #a46c48;
+}
+
+.product .order-direct-btn {
+  margin-top: auto;
 }
 
 
