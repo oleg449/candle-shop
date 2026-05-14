@@ -2352,6 +2352,11 @@ function homeEscapeHtml(value) {
     .replace(/'/g, '&#039;');
 }
 
+function productTextHtml(value, fallback = 'Опис відсутній') {
+  const text = String(value ?? '').trim() ? value : fallback;
+  return homeEscapeHtml(text);
+}
+
 const HOME_CERTIFICATES = [
   { stars: 500, image: 'images/500.png', note: 'Підійде для знайомства з Art Light.', term: 'Діє 6 місяців' },
   { stars: 1000, image: 'images/1000.png', note: 'Добрий вибір для подарунка.', term: 'Діє 9 місяців', popular: true },
@@ -2975,11 +2980,11 @@ function openProductModal(title) {
 
     <div class="tab-content">
       <div id="description" class="tab-section active">
-        <p>${product.description || 'Опис відсутній'}</p>
+        <p class="product-rich-text">${productTextHtml(product.description)}</p>
       </div>
       <div id="specs" class="tab-section">
         ${product.specs && product.specs.length
-          ? `<ul>${product.specs.map(s => `<li>${s}</li>`).join('')}</ul>`
+          ? `<ul>${product.specs.map(s => `<li class="product-rich-text">${productTextHtml(s, '')}</li>`).join('')}</ul>`
           : `<p>Немає характеристик</p>`}
       </div>
       <div id="reviews" class="tab-section">
@@ -3376,7 +3381,7 @@ function openSetModal(setProduct) {
       </div>
       <div class="set-detail" style="flex:1; min-height:160px; border:1px solid #eee; border-radius:8px; padding:12px;">
         <h4 id="setDetailTitle" style="margin-top:0;">Опис набору</h4>
-        <div id="setDetailBody">${setProduct.description || 'Без опису'}</div>
+        <div id="setDetailBody" class="product-rich-text">${productTextHtml(setProduct.description, 'Без опису')}</div>
       </div>
     </div>
 
@@ -3450,7 +3455,7 @@ function openSetModal(setProduct) {
         img = (it.images && it.images[0]) || '';
       }
       detailTitleEl.textContent = title;
-      detailBodyEl.innerHTML = `${img ? `<img src="${img}" alt="${title}" style="max-width:160px; border-radius:6px; float:right; margin:0 0 8px 12px;"/>` : ''}${desc}`;
+      detailBodyEl.innerHTML = `${img ? `<img src="${homeEscapeHtml(img)}" alt="${homeEscapeHtml(title)}" style="max-width:160px; border-radius:6px; float:right; margin:0 0 8px 12px;"/>` : ''}${productTextHtml(desc, 'Без опису')}`;
     });
   }
 

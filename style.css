@@ -1714,6 +1714,11 @@ nav a {
   line-height: 1.6;
 }
 
+#productModal .product-rich-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* Restore tab visibility logic: show only active section */
 #productModal .tab-section { display: none; }
 #productModal .tab-section.active { display: block; }
