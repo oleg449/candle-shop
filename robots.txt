@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /auth.html
+Disallow: /chat.html
+Disallow: /messages.html
+Disallow: /profile.html
+Disallow: /prewiew.html
+Disallow: /api/
+Disallow: /uploads/
+
+Sitemap: https://www.artlight.space/sitemap.xml
