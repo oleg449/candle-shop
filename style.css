@@ -1486,6 +1486,14 @@ nav a {
   transition: opacity 220ms ease, visibility 0s;
 }
 
+#productModal {
+  z-index: 1000;
+}
+
+#cartModal {
+  z-index: 1010;
+}
+
 #productModal .modal-content {
   transform: translate(-50%, -50%) translateY(10px) scale(0.98);
   opacity: 0;

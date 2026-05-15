@@ -624,6 +624,13 @@ function updateCartCount() {
   document.getElementById("cartCount").textContent = count;
 }
 
+function closeProductModalForCart() {
+  const productModal = document.getElementById("productModal");
+  if (!productModal) return;
+  productModal.classList.remove('open');
+  productModal.setAttribute('aria-hidden', 'true');
+}
+
 function openCart() {
   // Auth guard: require login to open the cart
   if (!hasActiveAccountSession()) {
@@ -632,6 +639,7 @@ function openCart() {
     }
     return;
   }
+  closeProductModalForCart();
 
   const cartItemsContainer = document.getElementById("cartItems");
   cartItemsContainer.innerHTML = "";
@@ -3588,7 +3596,10 @@ function changeImage(direction) {
 }
 
 function closeProductModal() {
-  document.getElementById("productModal").classList.remove('open');
+  const productModal = document.getElementById("productModal");
+  if (!productModal) return;
+  productModal.classList.remove('open');
+  productModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = 'auto';
 }
 
