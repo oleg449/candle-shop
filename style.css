@@ -5367,8 +5367,11 @@ html, body { max-width: 100%; overflow-x: hidden; }
   .floating-header .logo {
     grid-area: logo;
     justify-self: start;
-    height: 72px;
+    width: auto !important;
+    height: 72px !important;
+    max-height: 72px !important;
     margin: 0 !important;
+    transform: none !important;
   }
 
   .floating-header .nav-links {
