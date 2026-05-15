@@ -6,6 +6,7 @@ const cors = require('cors');
 const { body, validationResult } = require('express-validator');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -42,11 +43,19 @@ if (isProduction && path.normalize(CONTENT_DIR) !== path.normalize('/var/data/co
   throw new Error('Production CONTENT_DIR must be /var/data/content');
 }
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth_token';
+const VISITOR_COOKIE_NAME = process.env.VISITOR_COOKIE_NAME || 'site_visitor_id';
 const authCookieOptions = {
   httpOnly: true,
   sameSite: isProduction ? 'lax' : 'lax',
   secure: isProduction,
   maxAge: 24 * 60 * 60 * 1000,
+  path: '/'
+};
+const visitorCookieOptions = {
+  httpOnly: true,
+  sameSite: isProduction ? 'lax' : 'lax',
+  secure: isProduction,
+  maxAge: 365 * 24 * 60 * 60 * 1000,
   path: '/'
 };
 
@@ -134,6 +143,37 @@ const blockedStaticExtensions = new Set([
 ]);
 const blockedStaticDirectories = new Set(['preview', 'previews', 'node_modules']);
 
+function isTrackablePageRequest(req) {
+  if (!req || req.method !== 'GET') return false;
+  const pathname = String(req.path || '/').toLowerCase();
+  if (pathname.startsWith('/api/') || pathname.startsWith('/uploads/')) return false;
+  if (pathname === '/admin.html') return false;
+  if (pathname === '/' || pathname === '/index.html') return true;
+  return pathname.endsWith('.html');
+}
+
+function trackSiteVisit(req, res, next) {
+  if (!isTrackablePageRequest(req)) return next();
+  let visitorId = req.cookies ? req.cookies[VISITOR_COOKIE_NAME] : '';
+  if (!visitorId || !/^[a-f0-9-]{16,64}$/i.test(String(visitorId))) {
+    visitorId = crypto.randomUUID();
+    res.cookie(VISITOR_COOKIE_NAME, visitorId, visitorCookieOptions);
+  }
+  const ip = req.headers['x-forwarded-for']
+    ? String(req.headers['x-forwarded-for']).split(',')[0].trim()
+    : (req.ip || '');
+  const userAgent = String(req.headers['user-agent'] || '').slice(0, 500);
+  const pagePath = String(req.path || '/').slice(0, 250);
+  if (typeof db !== 'undefined' && db) {
+    db.run(
+      'INSERT INTO site_visits (visitor_id, path, user_agent, ip) VALUES (?, ?, ?, ?)',
+      [visitorId, pagePath, userAgent, ip],
+      () => {}
+    );
+  }
+  next();
+}
+
 app.use('/uploads', express.static(UPLOADS_DIR, {
   dotfiles: 'deny',
   index: false,
@@ -164,6 +204,8 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use(trackSiteVisit);
 
 app.use(express.static('.', {
   dotfiles: 'deny',
@@ -990,23 +1032,34 @@ app.get('/api/admin/overview', requireAdminPanelAccess, (req, res) => {
       if (err) return res.status(500).json({ error: 'Failed to load certificate stats' });
       db.get('SELECT COUNT(*) AS count FROM users', [], (usersErr, userRow) => {
         if (usersErr) return res.status(500).json({ error: 'Failed to load user stats' });
-        res.json({
-          counts: {
-            products: Array.isArray(products) ? products.length : 0,
-            masterclasses: Array.isArray(masterclasses) ? masterclasses.length : 0,
-            sets: Array.isArray(sets) ? sets.length : 0,
-            orders: orders && typeof orders === 'object' ? Object.keys(orders).length : 0,
-            users: Number(userRow && userRow.count) || 0,
-            reviews: reviews && typeof reviews === 'object'
-              ? Object.values(reviews).reduce((sum, list) => sum + (Array.isArray(list) ? list.length : 0), 0)
-              : 0,
-            admins: Array.isArray(admins) ? admins.length : 0,
-            certificates: Array.isArray(rows) ? rows.length : 0
-          },
-          revenue,
-          analytics: buildOrderAnalytics(orders),
-          recentActivity: buildRecentActivity(activityOrders, admins),
-          recentCertificates: rows || []
+        db.get(`SELECT
+          COUNT(*) AS total_visits,
+          COUNT(DISTINCT visitor_id) AS unique_visitors
+          FROM site_visits`, [], (visitsErr, visitRow) => {
+          if (visitsErr) visitRow = { total_visits: 0, unique_visitors: 0 };
+          res.json({
+            counts: {
+              products: Array.isArray(products) ? products.length : 0,
+              masterclasses: Array.isArray(masterclasses) ? masterclasses.length : 0,
+              sets: Array.isArray(sets) ? sets.length : 0,
+              orders: orders && typeof orders === 'object' ? Object.keys(orders).length : 0,
+              users: Number(userRow && userRow.count) || 0,
+              visitors: Number(visitRow && visitRow.unique_visitors) || 0,
+              reviews: reviews && typeof reviews === 'object'
+                ? Object.values(reviews).reduce((sum, list) => sum + (Array.isArray(list) ? list.length : 0), 0)
+                : 0,
+              admins: Array.isArray(admins) ? admins.length : 0,
+              certificates: Array.isArray(rows) ? rows.length : 0
+            },
+            visits: {
+              total: Number(visitRow && visitRow.total_visits) || 0,
+              unique: Number(visitRow && visitRow.unique_visitors) || 0
+            },
+            revenue,
+            analytics: buildOrderAnalytics(orders),
+            recentActivity: buildRecentActivity(activityOrders, admins),
+            recentCertificates: rows || []
+          });
         });
       });
     });
@@ -1842,6 +1895,15 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
       address TEXT,
       bonusStars INTEGER DEFAULT 0,
       certificateBonusStars INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS site_visits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      visitor_id TEXT NOT NULL,
+      path TEXT,
+      user_agent TEXT,
+      ip TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
