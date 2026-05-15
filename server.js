@@ -165,11 +165,24 @@ function trackSiteVisit(req, res, next) {
   const userAgent = String(req.headers['user-agent'] || '').slice(0, 500);
   const pagePath = String(req.path || '/').slice(0, 250);
   if (typeof db !== 'undefined' && db) {
-    db.run(
-      'INSERT INTO site_visits (visitor_id, path, user_agent, ip) VALUES (?, ?, ?, ?)',
-      [visitorId, pagePath, userAgent, ip],
-      () => {}
-    );
+    db.serialize(() => {
+      db.run(
+        `INSERT INTO site_visits (visitor_id, path, user_agent, ip, last_seen)
+         SELECT ?, ?, ?, ?, CURRENT_TIMESTAMP
+         WHERE NOT EXISTS (
+           SELECT 1 FROM site_visits WHERE visitor_id = ?
+         )`,
+        [visitorId, pagePath, userAgent, ip, visitorId],
+        () => {}
+      );
+      db.run(
+        `UPDATE site_visits
+         SET path = ?, user_agent = ?, ip = ?, last_seen = CURRENT_TIMESTAMP
+         WHERE visitor_id = ?`,
+        [pagePath, userAgent, ip, visitorId],
+        () => {}
+      );
+    });
   }
   next();
 }
@@ -1033,10 +1046,10 @@ app.get('/api/admin/overview', requireAdminPanelAccess, (req, res) => {
       db.get('SELECT COUNT(*) AS count FROM users', [], (usersErr, userRow) => {
         if (usersErr) return res.status(500).json({ error: 'Failed to load user stats' });
         db.get(`SELECT
-          COUNT(*) AS total_visits,
-          COUNT(DISTINCT visitor_id) AS unique_visitors
+          COUNT(DISTINCT visitor_id) AS unique_visitors,
+          COUNT(DISTINCT CASE WHEN datetime(COALESCE(last_seen, created_at)) >= datetime('now', '-5 minutes') THEN visitor_id END) AS online_visitors
           FROM site_visits`, [], (visitsErr, visitRow) => {
-          if (visitsErr) visitRow = { total_visits: 0, unique_visitors: 0 };
+          if (visitsErr) visitRow = { unique_visitors: 0, online_visitors: 0 };
           res.json({
             counts: {
               products: Array.isArray(products) ? products.length : 0,
@@ -1044,6 +1057,7 @@ app.get('/api/admin/overview', requireAdminPanelAccess, (req, res) => {
               sets: Array.isArray(sets) ? sets.length : 0,
               orders: orders && typeof orders === 'object' ? Object.keys(orders).length : 0,
               users: Number(userRow && userRow.count) || 0,
+              onlineVisitors: Number(visitRow && visitRow.online_visitors) || 0,
               visitors: Number(visitRow && visitRow.unique_visitors) || 0,
               reviews: reviews && typeof reviews === 'object'
                 ? Object.values(reviews).reduce((sum, list) => sum + (Array.isArray(list) ? list.length : 0), 0)
@@ -1052,8 +1066,8 @@ app.get('/api/admin/overview', requireAdminPanelAccess, (req, res) => {
               certificates: Array.isArray(rows) ? rows.length : 0
             },
             visits: {
-              total: Number(visitRow && visitRow.total_visits) || 0,
-              unique: Number(visitRow && visitRow.unique_visitors) || 0
+              unique: Number(visitRow && visitRow.unique_visitors) || 0,
+              online: Number(visitRow && visitRow.online_visitors) || 0
             },
             revenue,
             analytics: buildOrderAnalytics(orders),
@@ -1904,8 +1918,20 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
       path TEXT,
       user_agent TEXT,
       ip TEXT,
+      last_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    db.all(`PRAGMA table_info(site_visits)`, [], (err, rows) => {
+      if (err) { console.warn('PRAGMA site_visits table_info error:', err); return; }
+      const hasLastSeen = Array.isArray(rows) && rows.some(r => String(r.name) === 'last_seen');
+      if (!hasLastSeen) {
+        db.run(`ALTER TABLE site_visits ADD COLUMN last_seen DATETIME`, (e2) => {
+          if (e2) console.warn('ALTER TABLE add site_visits last_seen failed (may already exist):', e2.message);
+          db.run(`UPDATE site_visits SET last_seen = COALESCE(last_seen, created_at, CURRENT_TIMESTAMP)`);
+        });
+      }
+    });
 
     db.all(`PRAGMA table_info(users)`, [], (err, rows) => {
       if (err) { console.warn('PRAGMA users table_info error:', err); return; }

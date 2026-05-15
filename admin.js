@@ -593,6 +593,7 @@ async function loadOverview() {
     masterclasses: 'Майстер-класи',
     orders: 'Замовлення',
     users: 'Користувачі',
+    onlineVisitors: 'Онлайн зараз',
     visitors: 'Відвідувачі',
     reviews: 'Відгуки',
     admins: 'Адміни',
@@ -603,6 +604,7 @@ async function loadOverview() {
     masterclasses: 'masterclasses',
     orders: 'orders',
     users: 'users',
+    onlineVisitors: 'info',
     visitors: 'info',
     reviews: 'reviews',
     admins: 'admins',
@@ -613,26 +615,21 @@ async function loadOverview() {
     masterclasses: 'graduation',
     orders: 'clipboard',
     users: 'shield',
+    onlineVisitors: 'online',
     visitors: 'users',
     reviews: 'star',
     admins: 'shield',
     certificates: 'gift'
   };
-  $('statsGrid').innerHTML = Object.entries(data.counts || {}).filter(([key]) => key !== 'sets').map(([key, value]) => {
-    const visitsNote = key === 'visitors' && data.visits
-      ? `<small>Заходів: ${escapeHtml(data.visits.total || 0)}</small>`
-      : '';
-    return `
+  $('statsGrid').innerHTML = Object.entries(data.counts || {}).filter(([key]) => key !== 'sets').map(([key, value]) => `
       <button class="stat-card stat-link" type="button" data-target-section="${escapeHtml(statTargets[key] || 'info')}">
         <div class="stats-info">
           <span>${escapeHtml(labels[key] || key)}</span>
           <strong>${escapeHtml(value)}</strong>
-          ${visitsNote}
         </div>
         <span class="stat-icon" aria-hidden="true">${adminStatIcon(statIcons[key] || 'circle')}</span>
       </button>
-    `;
-  }).join('') + renderRevenueCard(data.revenue, data.analytics);
+    `).join('') + renderRevenueCard(data.revenue, data.analytics);
   overviewActivity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
   const seenActivity = getSeenActivityKeys();
   newOverviewActivityKeys = new Set(
@@ -668,6 +665,7 @@ function adminStatIcon(name) {
     clipboard: '<svg viewBox="0 0 24 24"><path d="M9 4h6l1 2h3v15H5V6h3l1-2Z"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>',
     star: '<svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>',
     shield: '<svg viewBox="0 0 24 24"><path d="M12 3 20 6v6c0 5-3.4 8-8 9-4.6-1-8-4-8-9V6l8-3Z"/><path d="m9 12 2 2 4-5"/></svg>',
+    online: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/><path d="M4 4l3 3"/><path d="M20 4l-3 3"/></svg>',
     users: '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg>',
     gift: '<svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9"/><path d="M2 7h20v5H2z"/><path d="M12 7v14"/><path d="M12 7H8.5A2.5 2.5 0 1 1 12 4.5V7Z"/><path d="M12 7h3.5A2.5 2.5 0 1 0 12 4.5V7Z"/></svg>',
     revenue: '<svg viewBox="0 0 24 24"><path d="M3 17 9 11l4 4 8-9"/><path d="M14 6h7v7"/></svg>',
