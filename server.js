@@ -44,11 +44,14 @@ if (isProduction && path.normalize(CONTENT_DIR) !== path.normalize('/var/data/co
 }
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'auth_token';
 const VISITOR_COOKIE_NAME = process.env.VISITOR_COOKIE_NAME || 'site_visitor_id';
+const AUTH_SESSION_DAYS = Number(process.env.AUTH_SESSION_DAYS) || 30;
+const AUTH_TOKEN_EXPIRES_IN = `${AUTH_SESSION_DAYS}d`;
+const AUTH_COOKIE_MAX_AGE = AUTH_SESSION_DAYS * 24 * 60 * 60 * 1000;
 const authCookieOptions = {
   httpOnly: true,
   sameSite: isProduction ? 'lax' : 'lax',
   secure: isProduction,
-  maxAge: 24 * 60 * 60 * 1000,
+  maxAge: AUTH_COOKIE_MAX_AGE,
   path: '/'
 };
 const visitorCookieOptions = {
@@ -2324,7 +2327,7 @@ app.post('/api/register', [
               email: email 
             },
             JWT_SECRET,
-            { expiresIn: '24h' }
+            { expiresIn: AUTH_TOKEN_EXPIRES_IN }
           );
 
           res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions);
@@ -2385,7 +2388,7 @@ app.post('/api/login', [
           email: user.email 
         },
         JWT_SECRET,
-        { expiresIn: '24h' }
+        { expiresIn: AUTH_TOKEN_EXPIRES_IN }
       );
 
       res.cookie(AUTH_COOKIE_NAME, token, authCookieOptions);
