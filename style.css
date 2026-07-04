@@ -954,81 +954,6 @@ nav a {
   font-weight: 700;
 }
 
-.products-show-more {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  min-width: 220px;
-  margin: 28px auto 0;
-  border: 0;
-  border-radius: 999px;
-  padding: 14px 22px 14px 28px;
-  background: #f28c3d;
-  color: #fff;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 14px 28px rgba(242, 140, 61, 0.28);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-}
-
-.products-show-more:hover {
-  transform: translateY(-2px);
-  background: #cc6c20;
-  box-shadow: 0 18px 34px rgba(242, 140, 61, 0.34);
-}
-
-.show-more-arrow {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-  transition: transform 0.24s ease, background 0.24s ease;
-}
-
-.show-more-arrow-line {
-  position: relative;
-  width: 2px;
-  height: 15px;
-  border-radius: 999px;
-  background: #fff;
-  transform: translateY(-2px);
-}
-
-.show-more-arrow-line::before,
-.show-more-arrow-line::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 9px;
-  height: 2px;
-  border-radius: 999px;
-  background: #fff;
-}
-
-.show-more-arrow-line::before {
-  right: 0;
-  transform: rotate(45deg);
-  transform-origin: right center;
-}
-
-.show-more-arrow-line::after {
-  left: 0;
-  transform: rotate(-45deg);
-  transform-origin: left center;
-}
-
-.products-show-more:hover .show-more-arrow {
-  transform: translateY(3px);
-  background: rgba(255, 255, 255, 0.24);
-}
-
 .certificate-code-popup {
   position: fixed;
   inset: 0;
@@ -1317,9 +1242,11 @@ nav a {
 .product h3 {
   margin: 1rem 0 0.3rem;
   padding: 0 16px;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  line-height: 1.25;
+  font-family: 'Montserrat', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
   min-height: 2.75em;
   color: var(--text);
   display: flex;
@@ -2120,6 +2047,18 @@ form button:hover {
   opacity: 0;
 }
 
+#productContainer {
+  transition: opacity 0.34s ease;
+}
+
+#productContainer.fade-out {
+  opacity: 0;
+}
+
+#productContainer.fade-in {
+  opacity: 1;
+}
+
 
 .order-btn {
   background-color: #8b5e3c;
@@ -2758,30 +2697,72 @@ body.category-open::before {
 }
 
 .pagination-controls {
-  text-align: center;
-  margin: 30px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 34px auto 0;
+  padding: 0 16px;
 }
 
 .pagination-controls button {
-  margin: 0 6px;
-  padding: 8px 14px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #fff3e6;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid rgba(139, 94, 60, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 243, 230, 0.86);
   color: #8b5e3c;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 8px 18px rgba(139, 94, 60, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.pagination-controls button:hover {
-  background-color: #ffe8cc;
+.pagination-controls button:hover:not(:disabled) {
+  background: #ffe8cc;
+  color: #6d4b2f;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(139, 94, 60, 0.14);
 }
 
 .pagination-controls button.active {
-  font-weight: bold;
-  background-color: #8b5e3c;
+  border-color: #d4a574;
+  background: linear-gradient(135deg, #d4a574, #c19660);
   color: white;
+  box-shadow: 0 12px 24px rgba(212, 165, 116, 0.28);
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.pagination-controls .pagination-arrow {
+  min-width: 104px;
+}
+
+@media (max-width: 767px) {
+  .pagination-controls {
+    gap: 8px;
+    margin-top: 28px;
+    padding: 0 10px;
+  }
+
+  .pagination-controls button {
+    min-width: 38px;
+    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .pagination-controls .pagination-arrow {
+    min-width: 92px;
+  }
 }
 
 

@@ -1885,41 +1885,35 @@ function addToCartWithQty(title, price, button) {
 
 
 let currentPage = 1;
-let productsPerPage = 9;
+let productsPerPage = getProductsPageSize();
 let allProducts = [];
 let currentCategory = 'all'; // ← текущее выбранное
 let searchQuery = ''; // Переменная для хранения поискового запроса
 let searchByNew = false;      // Спец-фільтр: новинки
 let searchByDiscount = false; // Спец-фільтр: зі знижкою
 let sortOption = 'relevance';  // 'relevance' | 'price_low' | 'price_high' | 'discount' | 'name' | 'new'
-let visibleProductsCount = 9;
+
+function getProductsPageSize() {
+  return window.innerWidth < 768 ? 8 : 9;
+}
 
 function resetVisibleProducts() {
-  visibleProductsCount = 9;
+  // Kept for existing filter/search callers; pagination no longer uses Load More state.
 }
 
 // Responsive: 8 items per page on mobile, 9 on desktop
 (function setupResponsiveProductsPerPage(){
   try {
-    const mq = window.matchMedia('(max-width: 768px)');
     const apply = () => {
-      const newVal = mq.matches ? 8 : 9;
+      const newVal = getProductsPageSize();
       if (productsPerPage !== newVal) {
         productsPerPage = newVal;
         currentPage = 1; // reset to first page to avoid empty page edge cases
-        resetVisibleProducts();
         try { renderProductsPage(currentPage); } catch(_) {}
       }
     };
     // initial apply (in case script loads after DOM)
     apply();
-    // listen for breakpoint changes
-    if (typeof mq.addEventListener === 'function') {
-      mq.addEventListener('change', apply);
-    } else if (typeof mq.addListener === 'function') {
-      mq.addListener(apply);
-    }
-    // extra safety: resize fallback
     window.addEventListener('resize', apply);
   } catch (_) { /* no-op */ }
 })();
@@ -2201,10 +2195,15 @@ function getFilteredProducts(){
 
 function renderProductsPage(page){
   const list = getFilteredProducts();
-  const limit = Math.max(9, Number(visibleProductsCount) || 9);
-  const pageProducts = list.slice(0, limit);
+  const pageSize = getProductsPageSize();
+  const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+  const targetPage = Math.min(Math.max(1, Number(page) || 1), totalPages);
+  const startIndex = (targetPage - 1) * pageSize;
+  const pageProducts = list.slice(startIndex, startIndex + pageSize);
   const container=document.getElementById("productContainer");
   if (!container) return;
+  currentPage = targetPage;
+  productsPerPage = pageSize;
   container.innerHTML='';
 
   // ----- Показ/скрытие сообщения «Нічого не знайдено 😢» -----
@@ -2212,108 +2211,63 @@ function renderProductsPage(page){
   const paginationEl = document.getElementById("pagination");
   if (list.length === 0) {
     if (noResultsEl) noResultsEl.style.display = "block";
-    if (paginationEl) paginationEl.style.display = "none";
+    if (paginationEl) {
+      paginationEl.innerHTML = '';
+      paginationEl.style.display = "none";
+    }
     // Ensure container is visible even when empty
     try { container.style.opacity = '1'; } catch(_) {}
     return; // нет товаров – дальше ничего не рендерим
   } else {
     if (noResultsEl) noResultsEl.style.display = "none";
-    if (paginationEl) paginationEl.style.display = "none";
   }
   // ------------------------------------------------------------
 
   pageProducts.forEach(p=>container.appendChild(createProductCard(p)));
-  if (paginationEl) paginationEl.innerHTML = '';
-  renderProductsShowMore(list.length, pageProducts.length);
-  renderRefreshButton();
+  renderPaginationControls(list.length, totalPages);
   // Ensure container is visible after any animations
   try { container.style.opacity = '1'; } catch(_) {}
-}
-
-function renderProductsShowMore(totalItems, shownItems) {
-  let button = document.getElementById('productsShowMore');
-  const container = document.getElementById('productContainer');
-  if (!container) return;
-  if (!button) {
-    button = document.createElement('button');
-    button.id = 'productsShowMore';
-    button.className = 'products-show-more';
-    button.type = 'button';
-    container.after(button);
-    button.addEventListener('click', () => {
-      visibleProductsCount += 9;
-      renderProductsPage(currentPage);
-    });
-  }
-  if (shownItems >= totalItems) {
-    button.style.display = 'none';
-    return;
-  }
-  button.style.display = 'inline-flex';
-  button.innerHTML = `
-    <span>Показати ще</span>
-    <span class="show-more-arrow" aria-hidden="true">
-      <span class="show-more-arrow-line"></span>
-    </span>
-  `;
 }
 
 // Smoothly navigate to a specific page with fade animation
 function goToPage(page){
   const container = document.getElementById('productContainer');
-  if (!container) { currentPage = page; return renderProductsPage(page); }
+  const list = getFilteredProducts();
+  const pageSize = getProductsPageSize();
+  const totalPages = Math.max(1, Math.ceil(list.length / pageSize));
+  const targetPage = Math.min(Math.max(1, Number(page) || 1), totalPages);
+  if (!container) { currentPage = targetPage; return renderProductsPage(targetPage); }
+  if (targetPage === currentPage) return;
   if (container.__animating) return;
   container.__animating = true;
 
-  // Use inline transition for reliability across styles
-  const DURATION = 260;
-  const prevTransition = container.style.transition;
-  container.style.transition = `opacity ${DURATION}ms ease`;
+  const DURATION = 340;
+  container.classList.remove('fade-in');
+  container.classList.add('fade-out');
 
-  let swapped = false;
-  const doSwap = () => {
-    if (swapped) return;
-    swapped = true;
-    // Clamp page to valid range based on current filter
-    const list = getFilteredProducts();
-    const totalPages = Math.max(1, Math.ceil(list.length / productsPerPage));
-    const targetPage = Math.min(Math.max(1, page), totalPages);
-    // Swap content while hidden
-    currentPage = targetPage;
+  setTimeout(() => {
     renderProductsPage(targetPage);
-    // Force reflow and fade back in
-    void container.offsetWidth;
-    container.style.opacity = '1';
-    // After fade-in completes, cleanup
-    const onFadeInEnd = (ev2) => {
-      if (ev2 && ev2.propertyName && ev2.propertyName !== 'opacity') return;
-      container.removeEventListener('transitionend', onFadeInEnd);
-      // restore transition style
-      container.style.transition = prevTransition;
-      container.__animating = false;
-    };
-    container.addEventListener('transitionend', onFadeInEnd, { once: true });
-    setTimeout(() => { // fallback
-      container.style.transition = prevTransition;
-      container.__animating = false;
-    }, DURATION + 80);
-  };
+    scrollToCatalogStart();
 
-  const onFadeOutEnd = (ev) => {
-    if (ev && ev.propertyName && ev.propertyName !== 'opacity') return;
-    container.removeEventListener('transitionend', onFadeOutEnd);
-    doSwap();
-  };
-
-  container.addEventListener('transitionend', onFadeOutEnd, { once: true });
-  // Trigger fade-out
-  void container.offsetWidth;
-  container.style.opacity = '0';
-  // Fallback if transitionend doesn't fire
-  setTimeout(() => { doSwap(); }, DURATION + 60);
+    requestAnimationFrame(() => {
+      container.classList.remove('fade-out');
+      container.classList.add('fade-in');
+      setTimeout(() => {
+        container.classList.remove('fade-in');
+        container.__animating = false;
+      }, DURATION);
+    });
+  }, DURATION);
 }
 
-function renderPaginationControls(totalItems){
+function scrollToCatalogStart() {
+  const target = document.getElementById('productContainer');
+  if (!target) return;
+  const top = target.getBoundingClientRect().top + window.scrollY - 120;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function renderPaginationControls(totalItems, totalPages){
   let paginationContainer = document.getElementById("pagination");
   if(!paginationContainer){
      paginationContainer=document.createElement('div');
@@ -2321,34 +2275,43 @@ function renderPaginationControls(totalItems){
      paginationContainer.className='pagination-controls';
      document.getElementById('productContainer').after(paginationContainer);
   }
-  const totalPages=Math.ceil(totalItems/productsPerPage)||1;
   paginationContainer.innerHTML='';
+  paginationContainer.style.display = totalItems > productsPerPage ? 'flex' : 'none';
+  if (totalPages <= 1) return;
+
+  const createButton = (label, page, options = {}) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = label;
+    btn.className = options.className || '';
+    btn.disabled = !!options.disabled;
+    if (options.ariaLabel) btn.setAttribute('aria-label', options.ariaLabel);
+    if (options.current) btn.setAttribute('aria-current', 'page');
+    btn.addEventListener('click', () => {
+      if (!btn.disabled) goToPage(page);
+    });
+    return btn;
+  };
+
+  paginationContainer.appendChild(createButton('‹ Назад', currentPage - 1, {
+    className: 'pagination-arrow',
+    disabled: currentPage === 1,
+    ariaLabel: 'Попередня сторінка'
+  }));
+
   for(let i=1;i<=totalPages;i++){
-     const btn=document.createElement('button');
-     btn.textContent=i;
-     btn.className=i===currentPage?'active':'';
-     btn.addEventListener('click',()=>{ goToPage(i); });
-     paginationContainer.appendChild(btn);
+     paginationContainer.appendChild(createButton(String(i), i, {
+       className: i===currentPage ? 'active' : '',
+       current: i===currentPage,
+       ariaLabel: `Сторінка ${i}`
+     }));
   }
-}
 
-function renderRefreshButton() {
-  const existingBtn = document.getElementById("refreshButton");
-  if (existingBtn) return;
-
-  const btn = document.createElement("button");
-  btn.id = "refreshButton";
-  btn.textContent = "🔁 Оновити товари";
-  btn.onclick = reloadProducts;
-  btn.style.display = "block";
-  btn.style.margin = "30px auto";
-  btn.style.padding = "10px 20px";
-  btn.style.backgroundColor = "#8b5c2c";
-  btn.style.color = "white";
-  btn.style.border = "none";
-  btn.style.borderRadius = "8px";
-
-  document.body.appendChild(btn);
+  paginationContainer.appendChild(createButton('Вперед ›', currentPage + 1, {
+    className: 'pagination-arrow',
+    disabled: currentPage === totalPages,
+    ariaLabel: 'Наступна сторінка'
+  }));
 }
 
 function homeEscapeHtml(value) {
@@ -2596,6 +2559,11 @@ function renderHomeCertificates() {
   `).join('');
 }
 
+function setMasterclassSectionVisible(visible) {
+  const section = document.getElementById('homeMasterclasses');
+  if (section) section.style.display = visible ? '' : 'none';
+}
+
 async function renderHomeMasterclasses() {
   const container = document.getElementById('homeMasterclassContainer');
   if (!container) return;
@@ -2606,9 +2574,12 @@ async function renderHomeMasterclasses() {
     ]);
     const masterclasses = response.ok ? await response.json() : [];
     if (!Array.isArray(masterclasses) || !masterclasses.length) {
-      container.innerHTML = '<p class="home-empty">Майстер-класів поки немає.</p>';
+      // Немає доступних майстер-класів — повністю ховаємо секцію, щоб не було порожньої зони
+      container.innerHTML = '';
+      setMasterclassSectionVisible(false);
       return;
     }
+    setMasterclassSectionVisible(true);
     homeMasterclassesCache = masterclasses;
     container.innerHTML = masterclasses.map((mc, index) => {
       const purchased = isMasterclassPurchased(mc);
@@ -2641,7 +2612,8 @@ async function renderHomeMasterclasses() {
     }).join('');
   } catch (error) {
     console.error('Помилка завантаження майстер-класів:', error);
-    container.innerHTML = '<p class="home-empty">Не вдалося завантажити майстер-класи.</p>';
+    container.innerHTML = '';
+    setMasterclassSectionVisible(false);
   }
 }
 
@@ -2797,7 +2769,6 @@ function reloadProducts() {
     allProducts = window.productsData;
     pruneEmptySelectedCategory();
     currentPage = 1;
-    visibleProductsCount = 9;
     updateCategoryPanel();
     renderProductsPage(currentPage);
     try {
@@ -3756,7 +3727,6 @@ fetch("products.json?t=" + new Date().getTime())
     window.productsData = Array.isArray(products) ? products : [];
     allProducts = window.productsData;
     pruneEmptySelectedCategory();
-    visibleProductsCount = 9;
     updateCategoryPanel(); // ← обновляем панель
     renderProductsPage(currentPage);
     // Initialize mobile search drawer UI (chips + sort)
