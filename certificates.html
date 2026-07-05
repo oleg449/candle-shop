@@ -393,12 +393,13 @@
       // Створюємо pending та замовлення на сайті. Адміни побачать його в панелі.
       let pendingId = '';
       try {
-        const resp = await makeAuthenticatedRequest(`${API_BASE_URL}/pending`, {
+        const canCreateAccountPending = typeof hasActiveAccountSession === 'function' && hasActiveAccountSession();
+        const resp = canCreateAccountPending ? await makeAuthenticatedRequest(`${API_BASE_URL}/pending`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type: 'certificate', payload: { stars: selectedCert.stars, title: selectedCert.name } })
-        });
-        if (resp.ok) {
+        }) : null;
+        if (resp && resp.ok) {
           const d = await resp.json();
           pendingId = d.id || '';
         }
@@ -414,7 +415,7 @@
           `Номінал: ${selectedCert.stars} ⭐`,
           pendingId ? `PID: ${pendingId}` : ''
         ].filter(Boolean).join('\n');
-        await makeAuthenticatedRequest(`${API_BASE_URL}/orders`, {
+        const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -442,13 +443,21 @@
               telegram: contactMethod === 'telegram' ? contact : ''
             }
           })
-        });
+        };
+        const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+        if (token) {
+          requestOptions.headers.Authorization = `Bearer ${token}`;
+        }
+        const response = await fetch(`${API_BASE_URL}/orders`, { ...requestOptions, credentials: 'include' });
+        if (!response.ok) {
+          throw new Error(await response.text().catch(() => 'Order save failed'));
+        }
       } catch (err) {
         console.error('Certificate order save failed:', err);
         alert('Не вдалося зберегти замовлення сертифіката. Спробуйте ще раз.');
         return;
       }
-      alert('Дякуємо за замовлення сертифіката! Після підтвердження на сайті з’явиться повідомлення з вашим промокодом.');
+      alert('Дякуємо за замовлення сертифіката! Ми зв’яжемося з вами для підтвердження.');
 
       form.reset();
       // Повернути поля зв'язку у стан за замовчуванням

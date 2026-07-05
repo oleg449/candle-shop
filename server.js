@@ -316,6 +316,23 @@ function authenticateToken(req, res, next) {
   });
 }
 
+function optionalAuthenticateToken(req, _res, next) {
+  const authHeader = req.headers['authorization'];
+  const headerToken = authHeader && authHeader.split(' ')[1];
+  const cookieToken = req.cookies ? req.cookies[AUTH_COOKIE_NAME] : null;
+  const token = headerToken || cookieToken;
+
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    req.user = err ? null : user;
+    next();
+  });
+}
+
 function requireAdminPanelAccess(req, res, next) {
   authenticateToken(req, res, () => {
     if (isSiteAdmin(req.user)) return next();
@@ -1437,7 +1454,7 @@ function findPendingOrderByNormalized(candidates, callback, orderContext = null)
   });
 }
 
-app.post('/api/orders', authenticateToken, (req, res) => {
+app.post('/api/orders', optionalAuthenticateToken, (req, res) => {
   try {
     const orders = readJsonFile('orders.json', {});
     const body = req.body || {};
@@ -1454,6 +1471,7 @@ app.post('/api/orders', authenticateToken, (req, res) => {
       : body.final_total;
     const customer = String(body.customer || summary.customer || '').trim();
     const raw = String(body.raw || summary.raw || '').trim();
+    const actorId = req.user && req.user.id ? req.user.id : null;
 
     const isNewOrder = !(orders[id] && typeof orders[id] === 'object');
     const previous = isNewOrder ? {} : orders[id];
@@ -1462,7 +1480,7 @@ app.post('/api/orders', authenticateToken, (req, res) => {
       id,
       orderId: rawOrderId || previous.orderId || id,
       pendingId: pendingId || previous.pendingId || '',
-      user_id: req.user.id,
+      user_id: actorId,
       status: previous.status || String(body.status || 'нове'),
       created_at: previous.created_at || now,
       summary: {
@@ -1481,21 +1499,23 @@ app.post('/api/orders', authenticateToken, (req, res) => {
       raw,
       history: Array.isArray(previous.history) && previous.history.length
         ? previous.history
-        : [{ ts: now, status: 'нове', by: req.user.id }]
+        : [{ ts: now, status: 'нове', by: actorId || 'guest' }]
     };
 
     orders[id] = order;
     writeJsonFile('orders.json', orders);
-    archiveOrder(order, isNewOrder ? 'created' : 'updated', req.user.id);
+    archiveOrder(order, isNewOrder ? 'created' : 'updated', actorId);
 
     if (isNewOrder) {
-      notifyUser(req.user.id, 'order_created', 'Ви оформили замовлення. Ми отримали його і скоро опрацюємо.', {
-        orderId: id,
-        total,
-        final_total: finalTotal,
-        stars_used: bodyStarsUsed,
-        items
-      });
+      if (actorId) {
+        notifyUser(actorId, 'order_created', 'Ви оформили замовлення. Ми отримали його і скоро опрацюємо.', {
+          orderId: id,
+          total,
+          final_total: finalTotal,
+          stars_used: bodyStarsUsed,
+          items
+        });
+      }
       const adminUserIds = readAdminsFile()
         .map(admin => Number(admin && admin.site_user_id))
         .filter(Boolean);

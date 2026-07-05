@@ -59,7 +59,7 @@
       { label: 'Умови повернення', href: 'info.html#returns' }
     ],
     qr: [
-      { img: '', label: 'Instagram QR' },
+      { img: 'QR1.jpg', label: 'Instagram QR' },
       { img: '', label: 'Telegram QR' },
       { img: '', label: 'Оплата QR' }
     ]
@@ -182,6 +182,7 @@
     '  gap:10px;',
     '}',
     '.al-footer__qr{',
+    '  appearance:none;',
     '  aspect-ratio:1/1;',
     '  min-height:82px;',
     '  border:1px dashed rgba(139,94,60,.34);',
@@ -194,10 +195,23 @@
     '  overflow:hidden;',
     '  padding:8px;',
     '  text-align:center;',
+    '  font:inherit;',
     '}',
     '.al-footer__qr:hover{',
     '  border-color:var(--footer-accent);',
     '  background:#fff;',
+    '}',
+    'button.al-footer__qr{',
+    '  cursor:pointer;',
+    '  transition:transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;',
+    '}',
+    'button.al-footer__qr:hover{',
+    '  transform:translateY(-2px);',
+    '  box-shadow:0 12px 26px rgba(139,94,60,.14);',
+    '}',
+    'button.al-footer__qr:focus-visible{',
+    '  outline:3px solid rgba(185,130,90,.35);',
+    '  outline-offset:3px;',
     '}',
     '.al-footer__qr img{',
     '  width:100%;',
@@ -220,6 +234,92 @@
     '  stroke:rgba(139,94,60,.52);',
     '  fill:none;',
     '  stroke-width:1.6;',
+    '}',
+    'body.al-footer-modal-open{',
+    '  overflow:hidden;',
+    '}',
+    '.al-footer-qr-modal[hidden]{',
+    '  display:none!important;',
+    '}',
+    '.al-footer-qr-modal{',
+    '  position:fixed;',
+    '  inset:0;',
+    '  z-index:9999;',
+    '  display:grid;',
+    '  place-items:center;',
+    '  padding:clamp(18px,4vw,48px);',
+    '  background:rgba(46,30,23,.78);',
+    '  backdrop-filter:blur(12px);',
+    '  -webkit-backdrop-filter:blur(12px);',
+    '}',
+    '.al-footer-qr-modal__panel{',
+    '  position:relative;',
+    '  width:min(720px,100%);',
+    '  max-height:100%;',
+    '  display:flex;',
+    '  flex-direction:column;',
+    '  align-items:center;',
+    '  gap:18px;',
+    '  padding:clamp(18px,4vw,34px);',
+    '  border:1px solid rgba(255,255,255,.45);',
+    '  border-radius:28px;',
+    '  background:linear-gradient(180deg,#fffaf4,#fff);',
+    '  box-shadow:0 30px 90px rgba(0,0,0,.38);',
+    '}',
+    '.al-footer-qr-modal__image{',
+    '  width:min(560px,100%);',
+    '  max-height:min(70vh,620px);',
+    '  object-fit:contain;',
+    '  border-radius:20px;',
+    '  background:#fff;',
+    '  padding:14px;',
+    '  box-shadow:inset 0 0 0 1px rgba(139,94,60,.12),0 16px 42px rgba(139,94,60,.18);',
+    '}',
+    '.al-footer-qr-modal__title{',
+    '  margin:0;',
+    '  padding:0 56px;',
+    '  color:var(--footer-text);',
+    '  font-size:clamp(18px,2.8vw,28px);',
+    '  font-weight:700;',
+    '  text-align:center;',
+    '}',
+    '.al-footer-qr-modal__close{',
+    '  position:absolute;',
+    '  top:16px;',
+    '  right:16px;',
+    '  z-index:10;',
+    '  width:46px;',
+    '  height:46px;',
+    '  border:1px solid rgba(255,255,255,.55);',
+    '  border-radius:50%;',
+    '  background:rgba(255,255,255,.92);',
+    '  color:#2e1e17;',
+    '  cursor:pointer;',
+    '  display:grid;',
+    '  place-items:center;',
+    '  font-size:0;',
+    '  line-height:0;',
+    '  padding:0;',
+    '  box-shadow:0 12px 30px rgba(0,0,0,.25);',
+    '}',
+    '.al-footer-qr-modal__close::before,',
+    '.al-footer-qr-modal__close::after{',
+    '  content:"";',
+    '  grid-area:1/1;',
+    '  width:18px;',
+    '  height:2.5px;',
+    '  border-radius:999px;',
+    '  background:currentColor;',
+    '}',
+    '.al-footer-qr-modal__close::before{',
+    '  transform:rotate(45deg);',
+    '}',
+    '.al-footer-qr-modal__close::after{',
+    '  transform:rotate(-45deg);',
+    '}',
+    '.al-footer-qr-modal__close:focus-visible{',
+    '  outline:3px solid rgba(255,255,255,.7);',
+    '  outline-offset:3px;',
     '}',
     '.al-footer__bottom{',
     '  width:min(1180px,100%);',
@@ -271,6 +371,12 @@
     '    justify-content:center;',
     '    text-align:center;',
     '  }',
+    '  .al-footer-qr-modal__panel{',
+    '    border-radius:22px;',
+    '  }',
+    '  .al-footer-qr-modal__image{',
+    '    max-height:64vh;',
+    '  }',
     '}'
   ].join('');
 
@@ -317,8 +423,24 @@
       var content = item && item.img
         ? '<img src="' + esc(item.img) + '" alt="' + esc(item.label || 'QR-код') + '" loading="lazy">'
         : placeholder;
+      if (item && item.img) {
+        return '<button class="al-footer__qr" type="button" data-qr-src="' + esc(item.img) +
+          '" data-qr-label="' + esc(item.label || 'QR') + '" aria-label="Open ' +
+          esc(item.label || 'QR') + '">' + content + '</button>';
+      }
       return '<div class="al-footer__qr">' + content + '</div>';
     }).join('');
+  }
+
+  function buildQrModal() {
+    return '' +
+      '<div class="al-footer-qr-modal" hidden role="dialog" aria-modal="true" aria-labelledby="al-footer-qr-modal-title">' +
+        '<div class="al-footer-qr-modal__panel">' +
+          '<button class="al-footer-qr-modal__close" type="button" aria-label="Close QR">&times;</button>' +
+          '<p class="al-footer-qr-modal__title" id="al-footer-qr-modal-title">QR</p>' +
+          '<img class="al-footer-qr-modal__image" src="" alt="QR" loading="eager">' +
+        '</div>' +
+      '</div>';
   }
 
   function buildFooter() {
@@ -365,6 +487,60 @@
     document.head.appendChild(style);
   }
 
+  function bindQrModal() {
+    var footer = document.querySelector('.al-footer');
+    if (!footer || footer.getAttribute('data-qr-modal-ready') === 'true') return;
+
+    footer.setAttribute('data-qr-modal-ready', 'true');
+
+    var modalWrap = document.createElement('div');
+    modalWrap.innerHTML = buildQrModal();
+    var modal = modalWrap.firstChild;
+    var image = modal.querySelector('.al-footer-qr-modal__image');
+    var title = modal.querySelector('.al-footer-qr-modal__title');
+    var close = modal.querySelector('.al-footer-qr-modal__close');
+    var activeTrigger = null;
+
+    document.body.appendChild(modal);
+
+    function openModal(trigger) {
+      activeTrigger = trigger;
+      var src = trigger.getAttribute('data-qr-src');
+      var label = trigger.getAttribute('data-qr-label') || 'QR';
+
+      image.src = src;
+      image.alt = label;
+      title.textContent = label;
+      modal.hidden = false;
+      document.body.classList.add('al-footer-modal-open');
+      close.focus();
+    }
+
+    function closeModal() {
+      if (modal.hidden) return;
+
+      modal.hidden = true;
+      image.removeAttribute('src');
+      document.body.classList.remove('al-footer-modal-open');
+      if (activeTrigger) activeTrigger.focus();
+      activeTrigger = null;
+    }
+
+    footer.addEventListener('click', function (event) {
+      var trigger = event.target.closest ? event.target.closest('button.al-footer__qr[data-qr-src]') : null;
+      if (!trigger || !footer.contains(trigger)) return;
+      openModal(trigger);
+    });
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal || event.target === close) closeModal();
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeModal();
+    });
+  }
+
   function render() {
     if (document.querySelector('.al-footer')) return;
 
@@ -373,6 +549,7 @@
     var wrapper = document.createElement('div');
     wrapper.innerHTML = buildFooter();
     document.body.appendChild(wrapper.firstChild);
+    bindQrModal();
   }
 
   if (document.readyState === 'loading') {

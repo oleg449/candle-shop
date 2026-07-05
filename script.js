@@ -632,13 +632,6 @@ function closeProductModalForCart() {
 }
 
 function openCart() {
-  // Auth guard: require login to open the cart
-  if (!hasActiveAccountSession()) {
-    if (confirm('Щоб відкрити кошик, потрібно увійти в акаунт. Перейти на сторінку входу?')) {
-      window.location.href = 'auth.html';
-    }
-    return;
-  }
   closeProductModalForCart();
 
   const cartItemsContainer = document.getElementById("cartItems");
@@ -1502,13 +1495,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (customForm) {
     customForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      // Require auth like other cart actions
-      if (!hasActiveAccountSession()) {
-        if (confirm('Для оформлення індивідуального замовлення потрібно увійти в акаунт. Перейти на сторінку входу?')) {
-          window.location.href = 'auth.html';
-        }
-        return;
-      }
 
       const material = materialSelect ? materialSelect.value : 'soy';
       const color = colorSelect ? colorSelect.value : 'white';
@@ -1542,11 +1528,6 @@ if (__orderForm) __orderForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   // Сброс флага одноразового начисления для нового оформления
   window.__purchaseStarsAwarded = false;
-
-  // Проверка авторизации перед оформлением заказа
-  if (typeof requireAuthForCheckout === 'function' && !requireAuthForCheckout()) {
-    return; // Останавливаем, если нужна авторизация
-  }
 
   const name = this.name.value.trim();
   const surname = this.surname.value.trim();
@@ -1696,6 +1677,10 @@ if (__orderForm) __orderForm.addEventListener("submit", async function (e) {
     starsToUse = certUsed + regularUsed;
   } catch (e) { /* fall back to 0 */ }
 
+  if (!hasActiveAccountSession()) {
+    starsToUse = 0;
+  }
+
   const finalToPay = Math.max(0, total - (starsToUse || 0));
 
   // Split discount: certificate stars vs regular
@@ -1733,7 +1718,9 @@ if (__orderForm) __orderForm.addEventListener("submit", async function (e) {
         quantity: Number(item.quantity) || 1
       }));
     const payload = { items, certificates, stars: 10 }; // always award +10 ⭐ per confirmed order
-    if (typeof makeAuthenticatedRequest === 'function') {
+    if (!hasActiveAccountSession()) {
+      // Гость может оформить заказ без аккаунта; бонуси/доступы привязываются только авторизованным.
+    } else if (typeof makeAuthenticatedRequest === 'function') {
       const resp = await makeAuthenticatedRequest(`${API_BASE_URL}/pending`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1799,9 +1786,11 @@ if (__orderForm) __orderForm.addEventListener("submit", async function (e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(siteOrder)
     };
-    const response = typeof makeAuthenticatedRequest === 'function'
-      ? await makeAuthenticatedRequest(`${apiBase}/orders`, requestOptions)
-      : await fetch(`${apiBase}/orders`, { ...requestOptions, credentials: 'include' });
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    if (token) {
+      requestOptions.headers.Authorization = `Bearer ${token}`;
+    }
+    const response = await fetch(`${apiBase}/orders`, { ...requestOptions, credentials: 'include' });
     if (!response.ok) {
       const details = await response.text().catch(() => '');
       throw new Error(details || `Order save failed: ${response.status}`);
